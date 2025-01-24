@@ -24,7 +24,7 @@ def connect_http(URI, port = HTTP_PORT):
     (if we wanted we could use version 6: IPv6)
 
     -SOCK_STREAM specifies that we want to use TCP. (we could also use UDP)
-    But of course not for HTTP.
+    But of course not for HTTP. We would for DNS however.
     '''
   
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,7 +43,7 @@ def connect_http(URI, port = HTTP_PORT):
     '''
 
     request = f"OPTIONS / HTTP/1.1\r\n"
-    request += f"Host:{URI}\r\n"
+    request += f"Host:{URI}\r\n" #CHANGE THIS SO OUR URL CAN JUST BE uvic.ca!! instead of www.uvic.ca
     request += f"Connection: keep-alive\r\n"
     request += f"Upgrade: h2c\r\n"
     request += f"Accept: */*\r\n"
@@ -62,16 +62,26 @@ def connect_http(URI, port = HTTP_PORT):
 
     response = client_socket.recv(10000).decode('utf-8')
     if ('301' in response) or ('302' in response):
-        if "Location: https" in response:
-            check_http2(get_location(response))
+        if ("Location: https" in response) or ("location: https" in response):
+            connect_https(get_location(response))
+        else:
+            connect_http(get_location(response))
+    elif ('400' in response):
+        print("Error 400 Bad Request --invalid URL")
 
-    print(response)
+    elif ('404' in response):
+        print("Error: 404 Not Found --invalid URL")
+
+    elif "HTTP2" in response:
+        print("website: URI")
+        print("supports http2 yes")
+        return
 
 
 #if needed connect via HTTPS
-def check_http2(URI): 
+def connect_https(URI): 
     context = ssl.create_default_context()
-    context.set_alpn_protocols(['h2','http/1.1'])
+    context.set_alpn_protocols(['h2'])
     client_socket = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=URI)
     client_socket.connect((URI, HTTPS_PORT))
     request = f"OPTIONS / HTTP/1.1\r\n"
@@ -82,11 +92,14 @@ def check_http2(URI):
     request += f"\r\n"
     client_socket.send(request.encode('utf-8'))
     response = client_socket.recv(10000).decode('utf-8')
-    print(response)
-
-
-    #negotiated_protocol = client_socket.selected_alpn_protocol()
-    #print(negotiated_protocol)
+    selected = client_socket.selected_alpn_protocol()
+    if selected != None:
+        print(f"website: {URI}")
+        print("1. Supports http2: yes")
+    else:
+        get_body_header(response)
+        print("1. Supports http2: no")
+    
 
 
 def get_location(response):
@@ -95,5 +108,11 @@ def get_location(response):
     new_uri = new_uri[0] 
     new_uri = new_uri[18:-1]
     return (new_uri)
+
+
+def get_body_header(response):
+    print('------------------------')
+    print(response.split('\n')[0])
+    print('------------------------')
 
 connect_http(URI)
