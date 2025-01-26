@@ -21,9 +21,10 @@ def connect_http(URI, path, port_8000 = False) -> None:
             client_socket.connect((URI, 8000))
 
         except Exception as e:
+            print("Error in: connect_http")
             print(f"Provided URL: \"{URI}\" is invalid")
             print("Try again")
-            print("IN: connect_http")
+            sys.exit(1)
             return
 
     else:
@@ -31,9 +32,10 @@ def connect_http(URI, path, port_8000 = False) -> None:
             client_socket.connect((URI, HTTP_PORT))
 
         except Exception as e:
+            print("Error in: connect_http")
             print(f"Provided URL: \"{URI}\" is invalid")
             print("Try again")
-            print("IN: connect_http")
+            sys.exit(1)
             return
 
     request = f"HEAD /{path} HTTP/1.1\r\n"
@@ -62,8 +64,10 @@ def get_h2_allowed(URI, port_8000 = False) -> bool:
             client_socket.connect((URI, 8000))
 
         except Exception as e:
+            print("Error in: get_h2_allowed")
             print(f"Provided URL: \"{URI}\" is invalid")
             print("Try again")
+            sys.exit(1)
             return
 
     else:
@@ -71,9 +75,10 @@ def get_h2_allowed(URI, port_8000 = False) -> bool:
             client_socket.connect((URI, HTTPS_PORT))
 
         except Exception as e:
+            print("Error in: get_h2_allowed")
             print(f"Provided URL: \"{URI}\" is invalid")
             print("Try again")
-            print("IN: get_h2_allowed")
+            sys.exit(1)
             return
 
     selected = client_socket.selected_alpn_protocol()
@@ -97,9 +102,10 @@ def connect_https(URI, path, port_8000 = False) -> None:
             client_socket.connect((URI, 8000))
 
         except Exception as e:
+            print("Error in: connect_https")
             print(f"Provided URL: \"{URI}\" is invalid")
             print("Try again")
-            print("IN: connect_http")
+            sys.exit(1)
             return
 
     else:
@@ -107,9 +113,10 @@ def connect_https(URI, path, port_8000 = False) -> None:
             client_socket.connect((URI, HTTPS_PORT))
 
         except Exception as e:
+            print("Error in: connect_https")
             print(f"Provided URL: \"{URI}\" is invalid")
             print("Try again")
-            print("IN: connect_https")
+            sys.exit(1)
             return
 
     request = f"HEAD /{path} HTTP/1.1\r\n" 
@@ -125,6 +132,7 @@ def connect_https(URI, path, port_8000 = False) -> None:
     response_check(response, URI, port_8000)
    
 def get_location(response) -> tuple:
+   
     pattern = re.compile('Location: http.+/', re.IGNORECASE)
     new_uri = re.findall(pattern, response)
     content_tuple = parse_uri(new_uri[0])
@@ -139,8 +147,9 @@ def get_path(response,new_uri) -> str:
     pattern = re.compile('Location: http.+', re.IGNORECASE)
     new_uri = re.findall(pattern, response)
     new_uri = new_uri[0].split('/')
-   
-    while '.ca' not in new_uri[0] and '.com' not in new_uri[0]:
+    
+
+    while ('.ca' not in new_uri[0]) and ('.com' not in new_uri[0]) and ('.net' not in new_uri[0]):
         new_uri.pop(0)
     new_uri.pop(0)
 
@@ -177,11 +186,32 @@ def print_body_header(body, headers) -> None:
 def get_cookies(headers) -> list:
     pattern = re.compile('Set-Cookie:.+;', re.IGNORECASE)
     cookies_temp_list = re.findall(pattern, headers)
+
     cookie_names = []
-    for index, cookie in enumerate(cookies_temp_list):
-        cookies_temp_list[index] = cookie.split("=")
-        cookie_names.append((cookies_temp_list[index][0])[11:])
-    return cookie_names
+    cookie_expire = []
+    cookie_domain = []
+    collective_cookies = []
+    curr_ind = -1
+
+    for index, cook in enumerate(cookies_temp_list):
+        cook = cook.split(';')
+
+        for i2, info in enumerate(cook):
+
+            if ('Set-Cookie' in info):
+                temp_c = info.split("=")
+                collective_cookies.append((temp_c[0])[11:])
+                curr_ind += 1
+
+            elif 'expires' in info:
+                temp_c = info.split("=")
+                collective_cookies[curr_ind] += (", Expires:"+(temp_c[1]))
+
+            elif 'domain' in info:
+                temp_c = info.split("=")
+                collective_cookies[curr_ind] += (", Domain:"+(temp_c[1]))
+
+    return collective_cookies
 
 
 def parse_uri(URI) -> tuple:
@@ -208,11 +238,53 @@ def parse_uri(URI) -> tuple:
                         return (URI, path)
                     else:
                         return (URI, path)
+    
+            elif URI[char+1] == 'n' and (char+2 < len(URI)):
+                
+                if URI[char+2] == 'e' and (char+3 < len(URI)):
+                    if URI[char+3] == 't':
+                        if char+4 < len(URI):
+                            path = URI[char+4:]
+                            URI = URI[:char+4]
+                            return (URI, path)
+                        else:
+                            return (URI, path)
+    return (None, None)
 
+def post_https(URI, path, username, password):
+
+    context = ssl.create_default_context()
+    context.set_alpn_protocols(['http/1.1'])
+    
+    client_socket = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=URI)
+    
+    print(URI)
+    
+
+#    Connect to the server
+    client_socket.connect((URI, HTTPS_PORT))
+    post_data = f"username={username}&password={password}"
+    request = f"POST /login HTTP/1.1\r\n"
+    request += f"Host: {URI}\r\n"
+    request += f"Content-Type: application/x-www-form-urlencoded\r\n"
+    request += f"Content-Length: {len(post_data)}\r\n"
+    request += f"Connection: close\r\n"
+    request += "\r\n"  # End of headers
+    request += post_data  # Send the form data
+    client_socket.sendall(request.encode())
+
+    # Receive the server's response
+    response = client_socket.recv(4096)
+    while len(response) > 0:
+        print(response.decode(), end="")
+        response = client_socket.recv(4096)
+
+    # Close the connection
+    client_socket.close()
 
 def response_check(response, location, port_8000) -> None:
-    
-    if ('301 Moved Permanently' in response) or ('302 Moved Temporarily' in response) or ('308 Permanent Redirect' in response) or ('302 Found' in response) or ('303 See Other' in response):
+    print(response)
+    if ('301 Moved Permanently' in response) or ('302 Moved Temporarily' in response) or ('308 Permanent Redirect' in response) or ('302 Found' in response) or ('303 See Other' in response) or ('302 Redirect' in response):
         location = get_location(response)
         path = location[1]
         location = location[0]
@@ -251,6 +323,10 @@ def response_check(response, location, port_8000) -> None:
             print(f"cookie name:{cookie}")
         print("Password-protected: no")
 
+    elif ('200 200' in response):
+        print("UNEXPECTED RESPONSE 200 200, leaving program")
+        sys.exit(1)
+
     elif ('403 403' in response) or ('403 Forbidden' in response) or ('401 401' in response) or ('401 Unauthorized' in response):
         h2_resp = 'no'
         if get_h2_allowed(location, port_8000) == True:
@@ -266,8 +342,15 @@ def response_check(response, location, port_8000) -> None:
     
 
 content_tuple = parse_uri(URI)
+ 
 
-connect_http(content_tuple[0], content_tuple[1])
+if content_tuple[0] == None:
+    print(f"Provided URL: {URI} is invalid.\nTry again")
+else:
+    connect_http(content_tuple[0], content_tuple[1])
+
+
+
 
 #for testing:
 #connect_http('localhost', "", True)
