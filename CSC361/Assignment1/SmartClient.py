@@ -90,8 +90,6 @@ def get_h2_allowed(URI, port_8000 = False) -> bool:
 
 #if needed connect via HTTPS
 def connect_https(URI, path, port_8000 = False) -> None: 
-    print("HOST", URI)
-    print("PATH", path)
     context = ssl.create_default_context()
     context.set_alpn_protocols(['http/1.1'])
     
@@ -128,11 +126,11 @@ def connect_https(URI, path, port_8000 = False) -> None:
     client_socket.send(request.encode('utf-8'))
     response = client_socket.recv(5000)
     response = response.decode('utf-8', errors='replace')
-    print(response)
+  
     response_check(response, URI, port_8000)
    
 def get_location(response) -> tuple:
-   
+
     pattern = re.compile('Location: http.+/', re.IGNORECASE)
     new_uri = re.findall(pattern, response)
     content_tuple = parse_uri(new_uri[0])
@@ -149,7 +147,7 @@ def get_path(response,new_uri) -> str:
     new_uri = new_uri[0].split('/')
     
 
-    while ('.ca' not in new_uri[0]) and ('.com' not in new_uri[0]) and ('.net' not in new_uri[0]):
+    while ('.ca' not in new_uri[0]) and ('.com' not in new_uri[0]) and ('.net' not in new_uri[0]) and ('.org' not in new_uri[0]):
         new_uri.pop(0)
     new_uri.pop(0)
 
@@ -249,42 +247,28 @@ def parse_uri(URI) -> tuple:
                             return (URI, path)
                         else:
                             return (URI, path)
+                        
+            elif URI[char+1] == 'o' and (char+2 < len(URI)):
+                if URI[char+2] == 'r' and (char+3 < len(URI)):
+                    if URI[char+3] == 'g':
+                        if char+4 < len(URI):
+                            path = URI[char+4:]
+                            URI = URI[:char+4]
+                            return (URI, path)
+                        else:
+                            return (URI, path)
+                        
     return (None, None)
 
-def post_https(URI, path, username, password):
 
-    context = ssl.create_default_context()
-    context.set_alpn_protocols(['http/1.1'])
-    
-    client_socket = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=URI)
-    
-    print(URI)
-    
-
-#    Connect to the server
-    client_socket.connect((URI, HTTPS_PORT))
-    post_data = f"username={username}&password={password}"
-    request = f"POST /login HTTP/1.1\r\n"
-    request += f"Host: {URI}\r\n"
-    request += f"Content-Type: application/x-www-form-urlencoded\r\n"
-    request += f"Content-Length: {len(post_data)}\r\n"
-    request += f"Connection: close\r\n"
-    request += "\r\n"  # End of headers
-    request += post_data  # Send the form data
-    client_socket.sendall(request.encode())
-
-    # Receive the server's response
-    response = client_socket.recv(4096)
-    while len(response) > 0:
-        print(response.decode(), end="")
-        response = client_socket.recv(4096)
-
-    # Close the connection
-    client_socket.close()
 
 def response_check(response, location, port_8000) -> None:
-    print(response)
-    if ('301 Moved Permanently' in response) or ('302 Moved Temporarily' in response) or ('308 Permanent Redirect' in response) or ('302 Found' in response) or ('303 See Other' in response) or ('302 Redirect' in response):
+    if ('HTTP/1.1' in response):
+        version = '1.1'
+    else:
+        version = '1.0'
+    if (f'HTTP/{version} 301' in response) or (f'HTTP/{version} 302' in response):
+        
         location = get_location(response)
         path = location[1]
         location = location[0]
@@ -294,23 +278,20 @@ def response_check(response, location, port_8000) -> None:
         else:
             connect_http(location, path, port_8000)
 
-    elif ('400 Bad Request' in response):
+    elif (f'HTTP/{version} 400' in response):
         print("Error 400 Bad Request --invalid URL")
         return 
         
-    elif ('404 Not Found' in response):
+    elif (f'HTTP/{version} 404' in response):
         print("Error: 404 Not Found --invalid URL")
         return 
 
-    elif ('HTTP2' in response) or ('http2' in response):
-        print(f"website: {URI}")
-        print("supports http2 yes")
-        return 
     
-    elif('405 Method Not Allowed' in response):
-        connect_https(URI, port_8000)
+    elif(f'HTTP/{version} 405' in response):
+        print("This URL does not allow HEAD http requests")
+        print("Please try another.")
 
-    elif ('200 OK' in response):
+    elif (f'HTTP/{version} 200' in response):
         
         h2_resp = 'no'
         if get_h2_allowed(location, port_8000) == True:
@@ -327,7 +308,7 @@ def response_check(response, location, port_8000) -> None:
         print("UNEXPECTED RESPONSE 200 200, leaving program")
         sys.exit(1)
 
-    elif ('403 403' in response) or ('403 Forbidden' in response) or ('401 401' in response) or ('401 Unauthorized' in response):
+    elif (f'HTTP/{version} 403' in response) or (f'HTTP/{version} 401' in response):
         h2_resp = 'no'
         if get_h2_allowed(location, port_8000) == True:
             h2_resp = 'yes'
