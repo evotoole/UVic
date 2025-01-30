@@ -14,7 +14,7 @@ URI = sys.argv[1]
 
 def connect_http(URI, path, port_8000 = False) -> None:
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+   
     #FOR TESTING IGNORE
     if port_8000:
         try:
@@ -130,15 +130,20 @@ def connect_https(URI, path, port_8000 = False) -> None:
     response_check(response, URI, port_8000)
    
 def get_location(response) -> tuple:
-
     pattern = re.compile('Location: http.+/', re.IGNORECASE)
     new_uri = re.findall(pattern, response)
-    content_tuple = parse_uri(new_uri[0])
-    new_uri = content_tuple[0]
-    new_uri = new_uri[18:]
-    path = content_tuple[1][1:]
-    path = get_path(response, new_uri)
-    return (new_uri, path)
+    if len(new_uri) == 0:
+        pattern = re.compile('Location: /.+', re.IGNORECASE)
+        new_uri = re.findall(pattern, response)
+        new_uri = new_uri[0][10:].strip()
+        return (URI, new_uri)
+    else:
+        content_tuple = parse_uri(new_uri[0])
+        new_uri = content_tuple[0]
+        new_uri = new_uri[18:]
+        path = content_tuple[1][1:]
+        path = get_path(response, new_uri)
+        return (new_uri, path)
 
 def get_path(response,new_uri) -> str:
     path = ''
@@ -263,6 +268,7 @@ def parse_uri(URI) -> tuple:
 
 
 def response_check(response, location, port_8000) -> None:
+    print(response)
     if ('HTTP/1.1' in response):
         version = '1.1'
     else:
