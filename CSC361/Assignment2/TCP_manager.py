@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple, ByteString
 
 #the known formatting of headers that we are dealing with
 CAP_HEADER_FORMAT = "IHHiIII"
-PACKET_HEADER_FORMAT = "IIII"
+PACKET_HEADER_FORMAT = "<IIII"
 ETHERNET_HEADER_FORMAT = "!6s6sH"
 IPV4_HEADER_FORMAT = "!BBHHHBBH4s4s"
 TCP_HEADER_FORMAT = "!HHLLBBHHH" 
@@ -14,6 +14,29 @@ BIG_END_MAGIC_NUM = b'\xa1\xb2\xc3\xd4'
 
 #takes a list of dictionaries corresponding to the packets from the cap file
 #organizes list dictionary further for easy analysis.
+def analyze_packets(connection_dict):
+    get_num_connections(connection_dict)
+    get_num_complete_connections(connection_dict)
+
+def get_num_connections(connection_dict):
+    print(len(connection_dict))
+
+def get_num_complete_connections(connection_dict):
+    syn_start = False
+    count = 0
+    for tuple in connection_dict.values():
+        for packet in tuple:
+            if packet['Flag_SYN'] == 1:
+                syn_start = True
+            if syn_start:
+                if packet['Flag_FIN'] == 1:
+                    syn_start = False
+                    count += 1
+    print(len(connection_dict))
+    print(count)
+
+
+
 def organize_LD(filename: str) -> List[Dict]:
     LD_packs = read_cap(filename)
 
@@ -66,15 +89,52 @@ def organize_LD(filename: str) -> List[Dict]:
 
     LD_packs = add_port(LD_packs)
 
+    #gets unique tuple list, and assigns a tuple to each index/packet in LD_packs
     tuple_groups, LD_packs = get_tups(LD_packs)
 
+    #makes a dictionary with a (unique) tuple as keys and a value of all packets
+    #with that same 4 tuple
     connection_dict = group_by_tuple(LD_packs, tuple_groups)
-
+    
+    
+    #gets the packets that have corresponding ports and IPs, they are part of
+    #the same connection
     connection_dict = merge_symmetric_tup(connection_dict)
-    print(len(connection_dict))
+    
+    #sorts the packets by relative time
+    connection_dict = sort_by_time(connection_dict)
+
+    #NOTe TO SELF, IF WE DO NOT HAVE FIN IN CONNECTION THEN 
+    
+    analyze_packets(connection_dict)
 
     return LD_packs
 
+
+
+def sort_by_time(connection_dict):
+    temp_list = []
+    prev = -1
+    for index, tup in enumerate(connection_dict.keys()):
+        connection_dict[tup] = bubble_sort_times(connection_dict[tup])
+        
+    return connection_dict
+   
+def bubble_sort_times(packet_list):
+    swapped = True
+    while swapped:
+        swapped = False
+        for index in range(len(packet_list) - 1):
+            if (packet_list[index]['pkt_head']['ts_sec'] > packet_list[index + 1]['pkt_head']['ts_sec'] or 
+               (packet_list[index]['pkt_head']['ts_sec'] == packet_list[index + 1]['pkt_head']['ts_sec'] and 
+                packet_list[index]['pkt_head']['ts_usec'] > packet_list[index + 1]['pkt_head']['ts_usec'])):
+                packet_list[index], packet_list[index + 1] = packet_list[index + 1], packet_list[index]
+                swapped = True
+    return packet_list
+
+
+            #'pkt_head':{'ts_sec': ph_tup[0], 'ts_usec':
+            
 
 #reads through a given cap file and splits/organizes headers, fields, and data, for easy analysis
 def read_cap(filename: str) -> List[Dict]:
@@ -106,34 +166,36 @@ def read_cap(filename: str) -> List[Dict]:
             #this makes it so this program works on a mac with and m1 chip for big
             #or little endian magic num.
             ph_unpacked = struct.unpack(read_as + PACKET_HEADER_FORMAT, ph_packed)
-    
+
             pd_packed = cap_file.read(ph_unpacked[2])
-            #print(ph_unpacked, pd_packed)
             pack_list_dict.append(pack_header_tuple_to_dict(ph_unpacked, pd_packed))
             
-   
+
     return pack_list_dict
 
 def merge_symmetric_tup(connection_dict):
-    to_delete = set()  # Store keys to delete
     marked_dict = dict.fromkeys(connection_dict.keys(), False)
 
-    for element1 in list(connection_dict.keys()):  # Use list() to avoid runtime issues
-        for element2 in list(connection_dict.keys()):
-            if (element1 != element2) and (
-                element1[0] == element2[1] and element1[1] == element2[0]
-                and element1[2] == element2[3] and element1[3] == element2[2]):
-               
-                connection_dict[element1].append(connection_dict[element2])
-
-                if (marked_dict[element2] or marked_dict[element1]) == False:
-                    marked_dict[element2] = True
+    for tuple1 in list(connection_dict.keys()):  # Use list() to avoid runtime issues
+        for tuple2 in list(connection_dict.keys()):
+            if (tuple1 != tuple2) and (
+                tuple1[0] == tuple2[1] and tuple1[1] == tuple2[0]
+                and tuple1[2] == tuple2[3] and tuple1[3] == tuple2[2]):
+                
+                connection_dict[tuple1].extend(connection_dict[tuple2])
+           
+                if (marked_dict[tuple2] or marked_dict[tuple1]) == False:
+                    marked_dict[tuple2] = True
                 # Mark for deletion instead of deleting inside loop
-     
+
 
     for key in marked_dict.keys():
         if marked_dict[key]:
             del connection_dict[key]
+
+    #for index, i2 in enumerate(connection_dict):
+    #    if index <1:
+    #        print(len(connection_dict[i2]))
 
     return connection_dict
 
@@ -146,15 +208,15 @@ def add_port(LD_packs):
     return LD_packs
 
 def group_by_tuple(LD_packs, tuple_list):
-    connect_dict = dict.fromkeys(tuple_list, [])
+    connect_dict = {key: [] for key in tuple_list}
+
     for index in range(1, len(LD_packs)):
-        connect_dict[LD_packs[index]['tuple']] = [LD_packs[index]]
+        connect_dict[LD_packs[index]['tuple']].extend([LD_packs[index]])
 
     return connect_dict
 
 def get_tups(LD_packs):
     unique_tups = []
-    print(len(LD_packs))
     for index in range(1, len(LD_packs)):
         new_tup = (LD_packs[index]['src_port'], LD_packs[index]['dest_port'], LD_packs[index]['src_IP'], LD_packs[index]['dest_IP'])
         LD_packs[index]['tuple'] = new_tup
@@ -172,7 +234,6 @@ def break_up_packs(LD_packs, trans_prot):
             LD_packs[index]['Flag_SYN'] = ((LD_packs[index]['offset_reserved_flags'] >> 1) & 1)
             LD_packs[index]['Flag_FIN'] = (LD_packs[index]['offset_reserved_flags'] & 1)
             LD_packs[index]['Flag_RST'] = (LD_packs[index]['offset_reserved_flags'] >> 2) & 1
-            print(LD_packs[index]['Flag_RST'])
         else:
             # if needed do this for UDP as well. 
             pass
