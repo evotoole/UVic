@@ -1,47 +1,44 @@
 from unittest import TestCase
 from unittest import main
-from clinic.note import *
+from clinic.note import Note
+import datetime
 
-class TestNoteClass(TestCase):
+class NoteTest(TestCase):
+	def setUp(self):
+		self.note = Note(1, "Patient shows up with chest pain", datetime.datetime.now())
 
-    def test_init(self):
-        # Test initialization of Note
-        note = Note("A1", "This is a note")
-        self.assertEqual(note.code, "A1")
-        self.assertEqual(note.text, "This is a note")
-        self.assertIsNone(note.time_stamp)
+	def test_eq(self):
+		same_note = Note(1, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_1 = Note(2, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_2 = Note(1, "Patient has dizziness", datetime.datetime.now())
+		self.assertTrue(self.note == self.note)
+		self.assertTrue(self.note == same_note)
+		self.assertFalse(self.note == different_note_1)
+		self.assertFalse(self.note == different_note_2)
 
-    def test_create_note(self):
-        # Test the create_note method
-        note = Note.create_note("B2", "Another note")
-        self.assertIsInstance(note, Note)
-        self.assertEqual(note.code, "B2")
-        self.assertEqual(note.text, "Another note")
+	def test_str(self):
+		same_note = Note(1, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_1 = Note(2, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_2 = Note(1, "Patient has dizziness", datetime.datetime.now())
+		self.assertEqual("1; " + str(self.note.timestamp) + "; Patient shows up with chest pain", str(self.note))
+		self.assertEqual("1; " + str(self.note.timestamp) + "; Patient shows up with chest pain", str(same_note))
+		self.assertEqual("2; " + str(self.note.timestamp) + "; Patient shows up with chest pain", str(different_note_1))
+		self.assertEqual("1; " + str(self.note.timestamp) + "; Patient has dizziness", str(different_note_2))
+		self.assertEqual(str(same_note), str(self.note))
+		self.assertNotEqual(str(different_note_1), str(self.note))
+		self.assertNotEqual(str(different_note_2), str(self.note))
 
-    def test_repr(self):
-        # Test the __repr__ method
-        note = Note("C3", "Sample note")
-        self.assertEqual(repr(note), "C3, Sample note")
+	def test_repr(self):
+		same_note = Note(1, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_1 = Note(2, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_2 = Note(1, "Patient has dizziness", datetime.datetime.now())
+		self.assertEqual("Note(1, " + repr(self.note.timestamp) + ", 'Patient shows up with chest pain')", repr(self.note))
+		self.assertEqual("Note(1, " + repr(same_note.timestamp) + ", 'Patient shows up with chest pain')", repr(same_note))
+		self.assertEqual("Note(2, " + repr(different_note_1.timestamp) + ", 'Patient shows up with chest pain')", repr(different_note_1))
+		self.assertEqual("Note(1, " + repr(different_note_2.timestamp) + ", 'Patient has dizziness')", repr(different_note_2))
+		self.assertEqual(repr(same_note), repr(self.note))
+		self.assertNotEqual(repr(different_note_1), repr(self.note))
+		self.assertNotEqual(repr(different_note_2), repr(self.note))
 
-    def test_eq(self):
-        # Test the __eq__ method
-        note1 = Note("D4", "Same note")
-        note2 = Note("E5", "Same note")
-        note3 = Note("F6", "Different note")
-        
-        self.assertTrue(note1 == "Same note")
-        self.assertFalse(note2 == "Different note")
-        self.assertFalse(note3 == "Same note")
-        self.assertFalse(note1 == None)
-
-    def test_set_note(self):
-        # Test the set_note method
-        note = Note("G7", "Initial note")
-        updated_note = note.set_note("H8", "Updated note")
-        self.assertIsInstance(updated_note, Note)
-        self.assertEqual(updated_note.code, "H8")
-        self.assertEqual(updated_note.text, "Updated note")
-
-
-if __name__ == "__main__":
-    unittest.main()
+if __name__ == '__main__':
+	unittest.main()
