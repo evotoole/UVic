@@ -1,0 +1,116 @@
+---
+title: "Stat123 Assignment #3"
+author: "Evan O'Toole"
+format: docx
+editor: visual
+---
+
+```{r}
+
+library(tidyverse) #observe which packages are loaded any potential conflicts
+library(nycflights13)
+library(gapminder)
+library(ggplot2)
+set.seed(42)
+age = sample(18:65, 50, replace = TRUE)
+height = runif(50, 150, 190)
+weight = runif(50,45,100)
+gender = sample(c("Male", "Female"), 50, replace = TRUE)
+data = data.frame(Age = age, Height = height, Weight = weight, Gender = gender)
+
+```
+
+Question 1
+
+```{r}
+#a)
+AH <- data |> 
+  select(Age, Height)
+head(AH)
+#b)
+A_30 <- data |>
+  filter(Age > 30)
+head(A_30)
+#c)
+Height_d <- data |> 
+  arrange(desc(Height))
+head(Height_d)
+#d)
+sumar <- data |> 
+  summarize(mean_age = mean(Age), median_age = median(Age), sd_age = sd(Age), var_age = var(Age))
+head(sumar)
+#e)
+quarts <- data |> 
+  summarize(Q1 = quantile(Height, 0.25), Q3 = quantile(Height, 0.75))
+head(quarts)
+# or just quantile(Height, c(0.25, 0.75))
+#f)
+quantile(data$Weight)
+#g)
+boxplot(data$Height)
+#h)
+ggplot(data = data, aes(, y = Height)) + geom_boxplot() + ggtitle("Height") + labs(x = "People")
+ggplot(data = data, aes(, y = Weight)) + geom_boxplot() + ggtitle("Weight") + labs(x = "People")
+#i)
+boxplot(Height ~ Gender, data = data, main = "Height by gender")
+boxplot(Weight ~ Gender, data = data, main = "Weight by gender")
+#j)
+ggplot(data = data, aes(x = as.factor(data$Gender), y = Height)) + geom_boxplot() + ggtitle("Height by Gender") + labs(x = "Gender")
+```
+
+Question 2
+
+```{r}
+#a
+data <- iris
+sel <- data |>
+  select(Species)
+head(sel)
+#b
+data <- data |>
+  arrange(Sepal.Length)
+head(data)
+#c
+data <- data |> 
+  mutate(Ratio = Sepal.Width/Petal.Width)
+head(data)
+#d
+data <- data |> 
+  mutate(Ratio = Sepal.Width/Petal.Width) |>
+  relocate(Ratio, .before = Sepal.Length)
+head(data)
+#e
+data <- data |> 
+  mutate(Ratio = Sepal.Width/Petal.Width) |>
+  relocate(Ratio, .after = Petal.Width)
+head(data)
+#f
+spec <- data |>
+  group_by(Species) |>
+  summarize(mean_p_len = mean(Petal.Length))
+head(spec)
+#g
+data <- data |>
+  mutate(Greater.half = data$Sepal.Width > (data$Sepal.Length/2))
+head(data)
+#h
+data <- data |> 
+  filter(Species == "setosa")
+head(data)
+#i
+data <- data |> 
+  rename(iris.Species = Species)
+head(data)
+```
+
+\
+
+\
+\
+
+\
+
+\
+\
+\
+\

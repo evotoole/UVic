@@ -1,7 +1,7 @@
 import sys
 import struct
 from struct import *
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, ByteString
 
 #the known formatting of headers that we are dealing with
 CAP_HEADER_FORMAT = "IHHiIII"
@@ -22,8 +22,8 @@ def analyze_packets(connection_dict):
     get_num_unclosed_connections(connection_dict)
     get_num_start_open_connections(connection_dict)
     get_connection_durations(connection_dict)
-    get_RTT(connection_dict)
     get_num_packs(connection_dict)
+    get_RTT(connection_dict)
     get_win_size(connection_dict)
 
 def get_RTT(connection_dict):
@@ -98,18 +98,21 @@ def get_num_unclosed_connections(connection_dict):
     count = 0  
 
     for conn_tuple in connection_dict.keys():
+        error = False 
         start = False  
-        
+
         for packet in connection_dict[conn_tuple]:
-            
+            all_none = True
+            if start:  
+                if len(packet['payload']) != 0: 
+                    error = True  
+
             if packet['Flag_FIN'] == 1:
-                start = True
+                start = True  
+                error = False 
+                
 
-            if start:
-                if len(packet['payload']) != 0:
-                    start = False
-
-        if start:  
+        if error:  
             count += 1
 
     print(f"The number of TCP connections that were still open when the trace capture ended: {count}")
@@ -515,7 +518,7 @@ def cap_header_tuple_to_dict(tup: Tuple) -> Dict[str, Dict]:
             'thiszone':tup[3], 'sigfigs':tup[4], 'snaplen': tup[5], 'network':tup[6]}
 
 #converts each packet header to a header dictionary to be added to a list.
-def pack_header_tuple_to_dict(ph_tup: Tuple, pd_byte) -> Dict[str, Dict[str, int]]:
+def pack_header_tuple_to_dict(ph_tup: Tuple, pd_byte: ByteString) -> Dict[str, Dict[str, int] | ByteString]:
     return {'pkt_head':{'ts_sec': ph_tup[0], 'ts_usec': ph_tup[1], 'incl_len': ph_tup[2], 'orig_len': ph_tup[3]},\
             'data': pd_byte}
 

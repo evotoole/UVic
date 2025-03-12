@@ -1,0 +1,57 @@
+---
+title: "MT#1"
+format: docx
+editor: visual
+---
+
+```{r}
+a <- c(1:99)
+seq(2,89,0.1)
+c("apple", 3.42)
+mean(a)
+sum(a)
+nums <- c(0,2,4,5,4,3,0)
+names(nums) <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+sum(nums)
+length(nums)
+nums[c("Thursday", "Friday")]
+nums[2:4]
+nums[2:6]
+
+```
+
+**CHAPTER 3**
+
+```{r}
+size <- c("XS", "S", "XL", "M", "XL", "M", "L", "XS", "XL", "S")
+size <- factor(size, levels = c("XS","S", "M", "L", "XL"))
+as.integer(size[1]) < as.integer(size[2])
+#note that if i missed one of these levels then it wouldnt be included in the factor
+#also recall that factors all must be the same type eg. char int numeric boolean etc.
+x<-matrix(1:6, nrow = 3)
+x
+m <- c("heloo", "ther", "my", "friend")
+m <- data.frame(m, nrow=2)
+m
+m <- matrix(m)
+m
+#generally just use matrix, instead of as.matrix, as.matrix isnt working
+s<-matrix(4:9, nrow = 10, ncol = 12, byrow=TRUE)
+s<-data.frame(s)
+m <- matrix(c("h", "t", "i", "i"), nrow = 1, byrow = TRUE)
+m <- rbind(m, c('a','d','f','s'))
+m
+age <- c(12,3,0.8,1)
+weight <- c(12,3,0.8,1)
+individuals <- matrix(age, weight, nrow =2, ncol = 4)
+individuals
+```
+
+```{r}
+library('ggplot2')
+?barplot
+?hist
+?ggplot
+?pie
+
+```

@@ -1,0 +1,61 @@
+---
+title: "Stat123 Lab 2"
+format: docx
+editor: visual
+author: "Evan O'Toole"
+---
+
+## LAB 2
+
+```{r}
+#QUESTION 1 a)
+Fdata <- read.csv("FlowerData.csv")
+
+#QUESTION 1 b)
+class(Fdata)
+#this out put of this is data.frame so it is a data frame
+
+#QUESTION 1 c)
+FlowerMatrix <- as.matrix(Fdata[c(2,3)])
+head(FlowerMatrix)
+
+#QUESTION 1 d)
+colnames(FlowerMatrix) <- c("Age (in days)", "Height (in cm")
+
+
+#QUESTION 1 e)
+rownames(FlowerMatrix) <- Fdata$Individual
+head(FlowerMatrix)
+```
+
+```{r}
+#QUESTION 2 a)
+mean(FlowerMatrix[,1])
+
+#QUESTION 2 b)
+mean(FlowerMatrix[,2])
+
+#QUESTION 2 c)
+height <- FlowerMatrix[,2]
+height[which.max(height)]
+
+#QUESTION 2 d)
+age <- FlowerMatrix[,1]
+age[which.min(age)]
+
+#QUESTION 2 e)
+colour <- Fdata$Colour
+colour[which.max(height)]
+colour[which.min(age)]
+```
+
+```{r}
+#QUESTION 3 a)
+Fdata[10:13,]
+
+#QUESTION 3 b)
+Fdata[11,4] <- "purple"
+ind <- Fdata[,1]
+Fdata[13,1] = "m"
+Fdata[10:13,]
+```

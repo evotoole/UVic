@@ -1,0 +1,73 @@
+---
+title: "Untitled"
+format: docx
+editor: visual
+---
+
+## Grades raw
+
+```{r}
+students <- read.csv(file = "rawgrades.csv", header=TRUE)
+dim(students)
+head(students)
+class(students)
+```
+
+```{r}
+students <- read.csv(file = "~/UVIC/Stat123/rawgrades.csv", header = TRUE)
+students
+```
+
+```{r}
+install.packages("readxl")
+```
+
+```{r}
+table(students[,2])
+```
+
+```{r}
+gradetable <- table(students[,2])
+barplot(gradetable, main="grade dist", xlab="letter grade")
+library(readxl)
+```
+
+```{r}
+
+```
+
+A factor has categorical data while a vector doesn't need to.
+
+A factor can also only store one data type at a time
+
+```{r}
+students$Grade <- factor(students$Grade, levels <- c("A+", "A", "A-", "B+", "B", "B-", "C", "D", "F"))
+levels(students$Grade)
+table(students[,2])
+```
+
+**nominal = unordered classifying**
+
+**ordinal = ordered classifying**
+
+```{r}
+pie(gradetable, main = ) #etc. finish this code for pie chart
+```
+
+**it is hard for us to plot data in a pie graph/bar graph when the given data is very spread out and non categorical. how we can plot these is by creating categories of ranges that contain these numbers.**
+
+$$
+The\ area\ of\ a\ circle\ is\ A = \pi r^2.
+$$
+
+$$
+x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}
+$$
+
+$$
+\sum_{k=1}^n a_k
+$$
+
+```{r}
+
+```

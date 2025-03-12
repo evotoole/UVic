@@ -1,0 +1,48 @@
+---
+title: "Lab Quiz 1"
+author: "Evan O'Toole"
+date: "Jan 31, 2025"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+# Likelihood methods for the Poisson distribution
+
+* Put your name in the author section above.
+* Write R code in the R chunks provided to answer the questions posed.
+* Execute each chunk of code to ensure that your code works properly.
+* Sometimes one of your chucks of code will not compile properly, but you must hand
+your document in.  In that case, 'Comment' out the R code that is not working properly using # as the first character in your lines of code.
+* Save the Rmd file.
+* Knit the Rmd file to pdf.
+* Upload the pdf file to the **Lab Quiz 1 Assignment Activity** in the Lab section of Brightspace. * If your file will not knit to pdf, then knit to Word and save the Word document as a pdf.
+
+## 1.  First generate 1 observation from the Poisson(lambda=5) distribution and print the value. [2 marks]
+(Hint:  See help for the R function called *rpois*.)
+
+```{r data}
+set.seed(12345)   #use this seed!
+n <- 1 
+rpois(n,5)
+```
+
+## 2.  Compute the Log-likelihood for a vector sequence of lambda values from 2 to 7 in steps of .05. [3 marks]
+(Hint:  See help for the R function called *dpois*.)
+
+```{r LogLik}
+obs <- rpois(n,5)
+lambda <- seq(2,7,0.05)
+dval <- dpois(obs, lambda, log=TRUE)
+```
+
+
+## 3. Plot the Log-Likelihood function values from your answer in 2 versus lambda. Axes must be labelled and the plot must have a title. [5 marks]
+
+```{r plotLog}
+obs <- rpois(n,5)
+dval <- dpois(obs, seq(2,7,0.05), log=TRUE)
+lambda <- seq(2,7,0.05)
+plot(dval~lambda, ylab = "Log-Likelihood", xlab = "Lambda's", type = 'p')
+```

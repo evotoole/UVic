@@ -1,0 +1,355 @@
+---
+title: "ggplot2 Visualization"
+format: docx
+editor: visual
+---
+
+## Install and load tidyverse, which includes ggplot2
+
+```{r}
+
+#In general, do not run install.packages() in the chunk.
+
+#Copy and paste the next line without the "#" in the console and run once.
+
+#install.packages("tidyverse")
+
+library(tidyverse)
+
+#or library(ggplot2)   #just this if you only want to present graphics
+
+```
+
+## Import data set
+
+```{r}
+
+#setwd() to set working directory
+students <- read.csv(file = "rawgrades.csv", header = TRUE)
+head(students)
+
+
+```
+
+## Create bar chart with ggplot2
+
+```{r}
+
+#Create a factor with orders
+
+students$Grade <-factor(students$Grade, 
+    levels = c("A+", "A", "A-", "B+", "B", "B-", "C", "D", "F"))
+
+#With ggplot2, we do not need to create a frequency table first.
+#Let's get the table anyway.
+
+gradetable <- table(students$Grade)
+
+#basic bar chart
+
+ggplot(data = students, aes(x = Grade)) + geom_bar()
+
+#ggplot2 default is frequency count
+
+
+#Compare ggplot with built-in R barplot
+
+barplot(gradetable, main = "Grade Distribution", xlab = "Letter Grade", col = rainbow(length(gradetable)))
+
+
+```
+
+## Add features to ggplot
+
+```{r}
+
+ggplot(data = students, aes(x = Grade)) + geom_bar(color = "blue", fill = "pink")
+
+
+ggplot(data = students, aes(x = Grade)) + geom_bar() + ggtitle("Grade Distribution") + labs(x = "Letter Grade", y = "Frequency")
+
+
+ggplot(data = students, aes(x = Grade, fill = Grade)) + geom_bar() + ggtitle("Grade Distribution") + labs(x = "Letter Grade", y = "Frequency")
+
+
+ggplot(data = students, aes(y = Grade, fill = Grade)) + geom_bar() + ggtitle("Grade Distribution") + labs(y = "Letter Grade", x = "Frequency")
+
+
+ggplot(data = students, aes(x = Grade, y = after_stat(count/sum(count)), fill = Grade)) + geom_bar() + ggtitle("Grade Distribution") + labs(x = "Letter Grade", y = "Relative Frequency")
+
+
+ggplot(data = students, aes(x = Grade, y= after_stat(100*count/sum(count)), fill = Grade)) + geom_bar() +
+  ggtitle("Grade Distribution") + labs(y = " Relative Frequency (%)")
+
+
+
+```
+
+#### Side note: Reversing orders of a factor
+
+```{r}
+
+head(students$Grade)
+
+students$Grade <- factor(students$Grade, levels=rev(levels(students$Grade)))
+
+head(students$Grade, 8)
+
+ggplot(data = students, aes(x = Grade, y = after_stat(count/sum(count)), fill = Grade)) + geom_bar() + ggtitle("Grade Distribution") + labs(x = "Letter Grade", y = "Relative Frequency")
+
+```
+
+## Bar chart from frequency table
+
+```{r}
+
+Grades.distn <- read.csv("grade.csv")
+
+Grades.distn
+
+# Vertical bar graph
+ggplot(Grades.distn, aes(x = Grade, y = Count)) + geom_bar(stat = "identity")
+
+
+# horizontal bar graph
+ggplot(Grades.distn, aes(x = Count, y = Grade)) + geom_bar(stat = "identity")
+
+
+# set colour of the bars
+ggplot(Grades.distn, aes(x = Count, y = Grade)) + geom_bar(stat = "identity", fill = "red")
+
+
+# set colour of the bars using colour codes and add title and labellings:
+
+ggplot(Grades.distn, aes(x = Grade, y = Count)) + geom_bar(stat = "identity", fill = "#FF6666") +
+  ggtitle("Grade Distribution") + labs(y = "Frequency")
+
+
+# set different colours for different bars
+
+ggplot(Grades.distn, aes(x = Count, y = Grade, fill = Grade)) + geom_bar(stat = "identity") +
+  ggtitle("Grade Distribution") + labs(x = "Frequency")
+
+
+ggplot(Grades.distn, aes(x = Grade, y = Count, fill = Grade)) + geom_bar(stat = "identity") +
+  ggtitle("Grade Distribution") + labs(x = "Frequency")
+
+
+#barplot without legend
+
+ggplot(Grades.distn, aes(x = Grade, y = Count, fill = Grade)) + geom_bar(stat = "identity") +
+  ggtitle("Grade Distribution") + labs(x = "Frequency") + guides(fill="none")
+
+
+ggplot(Grades.distn, aes(x = Grade, y = Count, fill = Grade)) + geom_bar(stat = "identity") +
+  ggtitle("Grade Distribution") + labs(x = "Frequency") + scale_fill_discrete(guide="none")
+
+
+ggplot(Grades.distn, aes(x = Grade, y = Count, fill = Grade)) + geom_bar(stat = "identity") +
+  ggtitle("Grade Distribution") + labs(x = "Frequency") + theme(legend.position="none")
+
+```
+
+## Pie Chart
+
+```{r}
+
+# This is an assignment question.
+
+```
+
+## Histogram
+
+```{r}
+
+pw <- PlantGrowth$weight
+
+pw
+length(pw)
+
+ggplot(PlantGrowth, aes(x = weight)) + geom_histogram(aes(x=weight, y= after_stat(density)), binwidth = .5)
+
+#better way to do this
+
+hist(pw, breaks = c(3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5))
+
+hist(pw)
+
+hist(pw, prob = TRUE)
+lines(density(pw), col = 6, lwd = 3)
+
+```
+
+## Another histogram example
+
+```{r}
+
+#?morley
+
+morley_hist <- ggplot(morley, aes(x = Speed)) + geom_histogram()
+morley_hist
+
+
+ggplot(morley, aes(x = Speed)) + geom_histogram(color = "red", fill = "green", binwidth = 25) # specify border and fill colours, and the binwidth
+
+ggplot(morley, aes(x = Speed)) + geom_histogram(aes(y = ..density..), color = "red", fill = "green", binwidth = 25) + geom_density(col = "blue") #scale the histogram so the total area of the histogram is 1 and add colour to be blue
+
+
+ggplot(morley, aes(x = Speed)) + geom_histogram(aes(y = after_stat(density)), color = "red", fill = "green", binwidth = 25) + 
+    geom_density(col = "blue") + xlim(590,1120) #specify the x-axis range
+
+
+#space for notes
+```
+
+## Contingency Table
+
+```{r}
+
+#dcba1 <- read.csv("UCBA_admitted.csv")
+#class(dcba1)
+
+dcba <- read_csv("UCBA_admitted.csv")
+#class(dcba)
+
+#difference between data frame and tibble?
+#developer of tibble claims that it is a better version of data frame.
+
+head(dcba)
+
+Gender <- dcba$Gender
+Dept <- dcba$Dept
+
+tab1 <- table(Gender, Dept)
+tab1
+
+tab2 <- table(Dept, Gender)
+tab2
+
+#Built-in R stacked bar plot
+
+barplot(tab1)
+
+barplot(tab2, col = rainbow(length(tab2[,1])))
+
+
+```
+
+## ggplot barplots
+
+```{r}
+
+#from data frame
+#there is no need to generate contingency table for barplots
+
+ggplot(dcba, aes(x = Gender, fill = Dept)) + geom_bar() +
+  ggtitle("Department Distribution by Gender") + labs(x = "Gender")
+
+ggplot(dcba, aes(x = Dept, fill = Gender)) + geom_bar() +
+  ggtitle("Gender Distribution by Department") + labs(x = "Dept")
+
+ggplot(dcba) + geom_bar(aes(Dept, fill = Gender), position = "fill") + ggtitle("Gender Distribution by Department") + labs(x = "Frequency", y = "Proportion")
+
+ggplot(dcba) + geom_bar(aes(Dept, fill = Gender), position = "fill") + ggtitle("Gender Distribution by Department") + labs(x = "Frequency", y = "Percentage") + scale_y_continuous(labels = scales::percent)
+
+```
+
+```{r}
+
+#side-by-side barplots
+
+ggplot(dcba) + geom_bar(aes(Gender, fill = Dept), position = "dodge") + ggtitle("Distribution of Department by Gender") + labs(x = "Gender")
+
+```
+
+#### Side-by-side Histogram
+
+```{r}
+
+morley2 <- morley
+morley2$Expt <- factor(morley$Expt)
+
+ggplot(morley2, aes(x = Speed, fill = Expt)) + geom_histogram() + facet_wrap(~Expt) + ggtitle("Speed of Light Measurement by Experiment Number")
+#each subset of the data is displayed in its own panel or facet
+
+```
+
+## Line plot for time series
+
+```{r}
+
+#lynx dataset  
+#?lynx  
+head(lynx)
+
+class(lynx)  
+
+Year <- 1821:1934 
+lynx.df <- as.data.frame(cbind(Year, lynx)) 
+head(lynx.df)  
+
+#need the x variable in sequential order 
+
+ggplot(lynx.df, aes(x = Year, y = lynx)) + geom_line(col = "purple")  
+
+#simple R line plot 
+
+plot(lynx) # don't need to create time variable
+
+```
+
+## 
+
+```{r}
+
+head(PlantGrowth)
+
+hist(PlantGrowth$weight, col = rainbow(length(PlantGrowth$weight)), xlab = "Weight", ylab = "Frequency", main = "Histogram of plant growth")
+
+library(ggplot2)
+
+ggplot(PlantGrowth, aes(x = weight)) + geom_histogram(bins = 5)
+?geom_histogram
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+LAB 1 Practice
+
+```{r}
+countries <- c('Norway', 'Denmark', 'Germany', 'Switzerland', 'Austria')
+countries
+countries[4]
+
+nums <- seq(20,201)
+length(nums)
+sum(nums)
+mean(nums)
+
+sleep <- c(8, 8, 8, 7, 8, 7, 7)
+days <- c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
+names(sleep) <- days
+sleep['Saturday']
+sleep[6]
+```
+
+Lab 2 practice
+
+```{r}
+read.csv('FlowerData.csv')
+```

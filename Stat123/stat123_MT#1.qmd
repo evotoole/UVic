@@ -1,0 +1,81 @@
+---
+title: "Stat123_MT#1"
+format: docx
+editor: visual
+---
+
+#VNUM: V01003221
+
+#Name: Evan O'Toole
+
+```{r}
+
+
+#a)
+hours <- c(25,35,10,20,40,50)
+sum_hours <- sum(hours)
+avg_hours <- mean(hours)
+len_hours <- length(hours)
+len_hours
+sum_hours
+avg_hours
+
+#b)
+df <- data.frame(hours, c("BC","ON","QC","MB","SK","AB"))
+names(df[,1]) <- df[,2]
+
+#c)
+hours <- df[,1]
+names(hours) <- df[,2]
+pie(hours)
+```
+
+The length of this sample is 6
+
+The total in of the hours is 180
+
+The average hours from these numbers is 30
+
+```{r}
+#2
+#a)
+Protein <- read.csv("protein.csv")
+#b)
+colnames(Protein)
+#c)
+class(Protein)
+#d)
+ProteinMatrix <- as.matrix(Protein[,c(2,3)])
+ProteinMatrix
+#e)
+names(ProteinMatrix) <- c("Beef", "Chicken")
+ProteinMatrix
+```
+
+The names are: Country, RedMeat, WhiteMeat, Eggs, Milk, Fish, Cereals, Starch, Nutes, Fr.Veg
+
+Protein is a data frame
+
+```{r}
+#3a)
+head(airquality)
+hist(airquality$Temp, main = "Maximum daily temperature at La Guardia Airport", xlab = "Temperature in degrees Fahrenheit", breaks = seq(50,100), col = "darkmagenta", fill = "darkmagenta")
+#b)
+library(ggplot2)
+ggplot(airquality, aes(x = Temp)) + geom_histogram(breaks = seq(50,100), col = "darkmagenta", fill = "darkmagenta") + labs(x = "Temperature in degrees Fahrenheit", title = "Maximum daily temperature at La Guardia Airport", y = "Frequency")
+```
+
+```{r}
+?par
+gear=as.factor(mtcars$gear)
+disp=as.factor(mtcars$disp)
+
+library(ggplot2)
+ggplot(mtcars, aes(x = cyl)) + geom_bar()
+ggplot(mtcars, aes(x = gear)) + geom_bar()
+
+hist(mtcars$gear)
+hist(mtcars$cyl)
+
+?ggplot
+```

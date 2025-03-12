@@ -268,7 +268,6 @@ def parse_uri(URI) -> tuple:
 
 
 def response_check(response, location, port_8000) -> None:
-    print(response)
     if ('HTTP/1.1' in response):
         version = '1.1'
     else:

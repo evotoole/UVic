@@ -1,0 +1,48 @@
+---
+title: "Stat123_lab3"
+format: docx
+editor: visual
+---
+
+```{r}
+#1
+
+#a
+library(readxl)
+sfo <- read_excel("SFO_Recovery_Onsite_December_2020.xlsx", sheet = 'Data')
+
+#b
+length(sfo$Q4)
+dim(sfo)[1]
+print("there are 1086 observations")
+
+#c
+length(sfo)
+dim(sfo)[2]
+print("there are 42 columns")
+head(sfo)
+print("after investigating the excel, we noted that the two columns can be considered individuals, so there are 40 variables in the dataset.")
+
+#d
+q4 <- sfo$Q4
+q4 <- factor( q4, levels = c(1,2,3,4,5,0))
+(tab <- table(q4))
+(tabrf = tab / sum(tab))
+
+tabnames <- c("Not at all", "Slightly", "Mildly", "Somewhat", "Very", "No response")
+
+names(tabrf) <- tabnames
+
+tabrf
+
+barplot(tabrf, main = "Travelers Concern During the Current Covid-19 Situation", xlab = "degree of concern", ylab = 'Relative Frequency', col = c("red", "blue", "green", "purple", "yellow", "cyan"))
+
+
+
+#e
+print("Most people feel a mild degree of concern about the covid situation, with a few more people somewhat or very concerned. The least people did not respond, or are not at all worried.")
+```
+
+```{r}
+
+```

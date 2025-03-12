@@ -1,0 +1,116 @@
+---
+title: "PracticeQuestionsMT2"
+format: docx
+editor: visual
+---
+
+## questions
+
+1\) find the median of the following vectors c(83, 83, 63, 2000, 74, 83, 79, 61, 82, 85, 62), c(83, 12, 3, 1, 99, 101). hint, do not use a built in function like median(). then do it with median()
+
+```{r}
+v1 <- c(83, 83, 63, 2000, 74, 83, 79, 61, 82, 85, 62)
+v1 <- sort(v1, decreasing = TRUE)
+v1[length(v1)/2 +1]
+v2 <- c(83, 12, 3, 1, 99, 101)
+v2 <- sort(v2, decreasing = FALSE)
+
+v2 <- (v2[length(v2)/2] + v2[length(v2)/2 + 1])/2
+v2
+median(v2)
+```
+
+2\) create a dataframe of the following vectors: score \<- c(82, 60, 77, 90, 70)wt1 \<- c(.15, .10, .15, .10, .50)wt2 \<- c(30, 50, 40, 25, 80). then from the data frame find the mean of one of the columns, do this using cbind and rbind
+
+```{r}
+score <- c(82, 60, 77, 90, 70)
+wt1 <- c(.15, .10, .15, .10, .50)
+wt2 <- c(30,50,40,25,80)
+df <- as.data.frame(cbind(score, wt1, wt2))
+df2 <- as.data.frame(rbind(score,wt1,wt2))
+mean(df$score)
+mean(df$score*df$wt1)
+(sum(df$score) + sum(df$wt1))/(length(df$score) + length(df$wt1))
+```
+
+3\) for this vector: c(2, 4, 8), find the geometric mean in 2 ways.
+
+```{r}
+vec <- c(2,4,8)
+geom <- (prod(vec))**(1/length(vec))
+geom2 <- exp((1/length(vec))*log(prod(vec)))
+geom
+geom2
+```
+
+4\) When should you use geometric, harmonic, or typical mean?:
+
+you should use the geometric mean for things like SKEWED DISTRIBUTIONS, population increase, ratios. Use harmonic for things like speed and distance sometimes time periods too.
+
+5\) use geometric mean on the stock.csv data set (hint remove na and use -1) on stock\$ratio
+
+```{r}
+
+```
+
+6\) find the mean of 3 columns of the stocks.csv data set (hint remove na)
+
+```{r}
+
+```
+
+7\) read the speed.csv data set and then apply the harmonic mean on the time and distance
+
+```{r}
+
+```
+
+8\) find the min and max (range) of: c(83, 83, 63, 2000, 74, 83, 79, 61, 82, 85, 62) using min() and max(), and another function
+
+```{r}
+
+```
+
+9\) use cumsum on the following to find the different percentiles for each item: c(81, 93, 63, 2000, 74, 83, 79, 61, 82, 85, 62)
+
+```{r}
+
+```
+
+10\) load the table of the previous vector into a data frame, and add columns representing cumulative frequence and relative frequency. understand what they mean
+
+```{r}
+
+```
+
+11\) use min, max, median, IQR, quantile, summary on the bulit in airquality dataset. (try putting numbers and vectors with the quantile function
+
+```{r}
+
+```
+
+12\) use vanilla R to create a box blot (box and whisker plot) for temp and month in the air quality data set
+
+```{r}
+
+```
+
+13\) do the same but with ggplot
+
+```{r}
+
+```
+
+14\) find the mean deviation, absolute mean deviation, and the mean square deviation
+
+```{r}
+
+```
+
+15\) find the standard deviation and variance of temp in 2 different ways.
+
+```{r}
+
+```
+
+16\) use LETTERS to make a data frame of letters and reps.

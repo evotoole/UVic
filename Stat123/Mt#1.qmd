@@ -1,0 +1,456 @@
+---
+title: "MT#1"
+format: docx
+editor: visual
+---
+
+```{r}
+a <- c(1:99)
+seq(2,89,0.1)
+c("apple", 3.42)
+mean(a)
+sum(a)
+nums <- c(0,2,4,5,4,3,0)
+names(nums) <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+sum(nums)
+length(nums)
+nums[c("Thursday", "Friday")]
+nums[2:4]
+nums[2:6]
+
+```
+
+**CHAPTER 3**
+
+```{r}
+size <- c("XS", "S", "XL", "M", "XL", "M", "L", "XS", "XL", "S")
+size <- factor(size, levels = c("XS","S", "M", "L", "XL"))
+as.integer(size[1]) < as.integer(size[2])
+#note that if i missed one of these levels then it wouldnt be included in the factor
+#also recall that factors all must be the same type eg. char int numeric boolean etc.
+x<-matrix(1:6, nrow = 3)
+x
+m <- c("heloo", "ther", "my", "friend")
+m <- data.frame(m, nrow=2)
+m
+m <- matrix(m)
+m
+#generally just use matrix, instead of as.matrix, as.matrix isnt working
+s<-matrix(4:9, nrow = 10, ncol = 12, byrow=TRUE)
+s<-data.frame(s)
+m <- matrix(c("h", "t", "i", "i"), nrow = 1, byrow = TRUE)
+m <- rbind(m, c('a','d','f','s'))
+m
+age <- c(12,3,0.8,1)
+weight <- c(80,40,20,25)
+
+individuals <- rbind(age, weight)
+rownames(individuals) <- c('ur', 'mom')
+colnames(individuals) <- c("kys", 'you', "yefe", "bibity")
+individuals
+which.max(age)
+which.min(weight)
+```
+
+```{r}
+library(ggplot2)
+fact <- factor(c('XL', 'XL', 'XS', "XL", "XS"), levels <- c('XS', "XL"), ordered = TRUE)
+fact[1] > fact[3]
+m <- matrix(1:4, byrow = TRUE, nrow =2, ncol =2)
+m
+(colSums(m))
+(rowSums(m))
+m <- rbind(m, c(5,6))
+m <- as.matrix(PlantGrowth)
+m
+class(PlantGrowth)
+class(m)
+class(PlantGrowth$weight)
+new_df <- data.frame(c(1,2,3,4,5), c(6,7,8,9,10), c(11,12,13,14,15))
+head(new_df[1])
+```
+
+**Chapter 4**
+
+```{r}
+
+students <- read.csv('rawgrades.csv', header = TRUE)
+dim(students)
+head(students)
+class(students)
+```
+
+```{r}
+
+library(readxl)
+profits <- read_excel('/Users/evanotoole/Downloads/profit.xlsx')
+head(profits)
+profits[,2:length(profits[1])]
+sum <- rowSums(prof)
+names(sum) <- c("A", "B", "C", "D", "E")
+vec <- as.vector(profits[,1])
+class(as.vector(vec))
+vec
+barplot(sum, main = "net profits for companies", xlab = "company", ylab = "profit", col = rainbow(length(sum)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+library(readxl)
+
+
+profit <- read_excel("/Users/evanotoole/Downloads/profit.xlsx")
+grades <- students$Grade
+t <- table(grades)
+?barplot
+barplot(t, main = "grade dist", xlab= "grade", ylab = "quantity", col = rainbow(length(t)))
+
+t <- t/sum(t)
+barplot(t, main = "grade dist (rel freq)", xlab= "grade", ylab = "rel freq", col = rainbow(length(t)))
+```
+
+```{r}
+pie(t, col = rainbow(length(t)))
+```
+
+```{r}
+freq <- PlantGrowth$weight
+naming <- seq(4, 6.5, 0.5)
+length(naming)
+length(freq)
+hist(freq, breaks = c(3.5,4,4.5,5,5.5,6,6.5))
+```
+
+```{r}
+# Example data
+counts <- c(10, 30, 20, 40)
+labels <- c("A", " B", "C", "D")
+
+
+table(counts)
+names(counts) <- labels
+hist(counts)
+```
+
+```{r}
+library(ggplot2)
+?ggplot()
+?aes
+
+library(tidyverse)
+grades <- read.csv('rawgrades.csv', header = TRUE)
+head(grades)
+dim(grades)
+```
+
+```{r}
+grades <- read.csv('rawgrades.csv', header = TRUE)
+head(grades)
+dim(grades)
+
+?geom_bar
+ggplot(grades, mapping = aes(x = Grade)) + geom_bar(fill = "blue", colour = "green") + labs(title = "Grades and there counts", x ="counts", y="grades")
+```
+
+**Lab 2**
+
+```{r}
+Fdata <- read.csv('FlowerData.csv')
+class(Fdata)
+Fdata
+
+
+
+FlowerMatrix <- as.matrix(Fdata[,2:3])
+colnames(FlowerMatrix) <- c("Age (in days)", "Height (in cm)")
+
+temp <- Fdata[1]
+temp <- as.matrix(temp)
+temp <- as.vector(temp)
+rownames(FlowerMatrix) <- temp
+head(FlowerMatrix)
+mean(FlowerMatrix[,1])
+mean(FlowerMatrix[,2])
+mheight <- which.max(FlowerMatrix[,2])
+mage <- which.min(FlowerMatrix[,1])
+Fdata[mheight,4]
+Fdata[mage, 4]
+mheight
+mage
+```
+
+```{r}
+library(readxl)
+library(ggplot2)
+sheet <- read_excel('SFO_Recovery_Onsite_December_2020.xlsx')
+nrow(sheet)
+ncol(sheet)
+head(sheet)
+q <- as.matrix(sheet['Q4'])
+q <- as.numeric(q)
+q <- as.vector(q)
+tq <- table(q)
+tq <- tq/sum(tq)
+barplot(tq, names.arg = c("Not at all", "Little", "A bit", "Some", "A lot", "NA"), ylab = "Relative Frequency", col = c("blue", "green", "orange", "red", "brown","black"))
+?ggplot
+ggplot(sheet, aes(x = Q4)) + geom_bar()
+```
+
+**Assignment #2**
+
+```{r}
+library(ggplot2)
+class(lynx)
+head(lynx)
+ly <- data.frame(lynx)
+years <- rownames(ly)
+years <- as.numeric(years)
+
+ly <- as.matrix(ly)
+ly <- cbind(ly, years)
+ly <- as.data.frame(ly)
+ly
+ggplot(ly, aes(y = lynx, x = years)) + geom_line()
+
+str(lynx)
+
+lynx['1867']
+mean(lynx[seq(1,90)])
+```
+
+```{r}
+casino <- read.csv('casino.csv')
+head(casino)
+friends <- as.matrix(casino['Name'])
+friends <- as.vector(friends)
+
+winnings <- as.matrix(casino[,2:6])
+
+totals <- rowSums(winnings)
+
+names(totals) <- friends
+friends
+totals
+which.max(totals)
+which.min(totals)
+
+mean(totals)
+```
+
+```{r}
+library(ggplot2)
+gov <- read.csv('Government_expenditure_per_student.csv')
+
+
+ggplot(gov, aes(x = Value)) + geom_histogram(aes(y = ..density..), binwidth = 2, fill = "skyblue", col = "black") + geom_density(color = "green") + labs(title = "hello")
+?labs
+```
+
+```{r}
+gov <- read.csv('Government_expenditure_per_student.csv')
+library(ggplot2)
+head(gov)
+
+hist(gov$Value, breaks = c(0, 60, 120), xlab = "goven exp", ylab = "freq", main="fef", col = c("red", 'orange'))
+
+ggplot(gov, aes(x = Value)) + geom_histogram(fill = 'brown', col = 'black') + labs(x = "count", y = "cho", title = "dahs")
+?labs
+
+#?ggplot
+```
+
+```{r}
+new <- read.csv('casino.csv')
+library(ggplot2)
+head(new)
+vals <- new[,2:6]
+vals <- rowSums(vals)
+names(vals) <- new[,1]
+new <- cbind(new[,1],vals)
+class(new)
+new <- as.data.frame(new)
+new[,2] <- as.numeric(new[,2])
+
+peo <- new[,2]
+names(peo) <- new[,1]
+peo
+barplot(peo)
+names(new[,2]) <- new[,1]
+new
+ggplot(new, aes(x = V1, y = vals)) + geom_bar(stat = 'identity') 
+
+```
+
+**STARTING NOW:**
+
+```{r}
+size <- c('xl','xs','m','l','s','l','xs','xs','xl')
+fact <- factor(size, levels = c('xl','l','m','s','xs'), ordered = TRUE)
+table(fact)
+
+mat <- matrix(1:9, nrow = 3, ncol = 3,byrow =TRUE)
+
+vmat <- matrix(c(1,2,3,3,1,2), nrow = 3)
+
+colsb<-cbind(c(1,2,3),c(4,3,2),c(3,2,1))
+
+rowSums(colsb)
+colSums(colsb)
+
+df = data.frame(c(1,2,3,2,3,1,4))
+df <- data.frame(matrix(1:9))
+```
+
+```{r}
+grades <- read.csv("rawgrades.csv")
+head(grades, 20)
+dim(grades)
+class(grades)
+
+newg <- grades$Grade
+table(newg)
+tab <- table(newg)
+names(tab)
+barplot(tab, xlab = "grades", ylab="freq", main = "studnet grades", col = c("orange", "green", "pink", "yellow", "blue", "purple", "brown", "black", "red"))
+sum(tab)
+mean(tab)
+rfreq <- tab/sum(tab)
+barplot(rfreq, xlab = "grades", ylab="freq", main = "studnet grades", col = c("orange", "green", "pink", "yellow", "blue", "purple", "brown", "black", "red"))
+
+pie(rfreq, col = c("orange", "green", "pink", "yellow", "blue", "purple", "brown", "black", "red"), xlab = "tester", ylab ="fe", main ="fef")
+```
+
+```{r}
+plants <- PlantGrowth
+head(plants)
+vect <- vector()
+
+vect[1] <- plants$weight[plants$weight < 5]
+vect[2] <- plants$weight[(plants$weight < 6 ) & (plants$weight >= 5 )]
+#vect[2] <- length(plants[plants$weight >= 4] & plants[plants$weight < 5])
+barplot(vect)
+?hist
+hist(plants$weight, breaks = seq(0,10, 0.5))
+```
+
+```{r}
+grad <- read.csv("rawgrades.csv")
+head(grad)
+levs = unique(grad$Grade)
+levs <- sort(levs)
+levs
+factg <- factor(grad$Grade, levels = levs)
+grd <- table(factg)
+library(ggplot2)
+ggplot(grad, aes(x=Grade)) + geom_bar(fill = "blue", col="black") + labs(x = "he", y = "she", title = "chad")
+
+ggplot(grad, aes(x= ))
+```
+
+```{r}
+grd <- read.csv("grade.csv")
+ggplot(grd, aes(x = Grade, y = Count)) + geom_bar(stat = "identity", col = "blue", fill = "black") + labs(title = "got them", x = "good")
+
+```
+
+```{r}
+plant <- PlantGrowth
+ggplot(plant, aes(x = weight)) + geom_histogram(breaks = c(3,4,5,6), fill = "black", col = "blue", aes(y = ..density..)) + geom_density(col = "red")
+```
+
+```{r}
+morley
+ggplot(morley, aes(x = Speed)) + geom_histogram(aes(y = ..density..), breaks = c(600,700,800,900,1000), col = "blue", fill = "black") + geom_density(col = "red") + labs(x = "blocks", y = "frequency", title = "morley")
+```
+
+```{r}
+nums <- seq(20, 201)
+length(nums)
+sum(nums)
+mean(nums)
+```
+
+```{r}
+sleep <- c(8,8,8,8,8,8,8)
+days <- c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
+names(sleep) <- days
+sleep
+sleep['Saturday']
+sleep[6]
+```
+
+```{r}
+Fdata <- read.csv("FlowerData.csv")
+class(Fdata)
+FlowerMatrix <- as.matrix(Fdata[2:3])
+class(FlowerMatrix)
+colnames(FlowerMatrix) <- c("Age in days", "Height in cm")
+rownames(FlowerMatrix) <- Fdata$Colour
+head(FlowerMatrix,3)
+```
+
+```{r}
+mean(FlowerMatrix[,1])
+mean(FlowerMatrix[,2])
+which.max(FlowerMatrix[,1])
+which.min(FlowerMatrix[,2])
+
+```
+
+```{r}
+library(readxl)
+sfo <- read_excel("SFO_Recovery_Onsite_December_2020.xlsx", sheet= "Data")
+dim(sfo)
+head(sfo)
+q4 <- sfo$Q4
+q4 <- table(q4)
+q4
+names(q4) <- c('Nt','n h','me', 'se','vry','NA')
+q4 <- q4/sum(q4)
+
+barplot(q4, xlab = "x label", ylab = "y label", main = "main title", col = c("red", "green","orange","yellow","pink",'purple'))
+```
+
+```{r}
+govn <- read.csv("Government_expenditure_per_student.csv")
+library(ggplot2)
+head(govn)
+ggplot(govn, aes(x = Value)) + geom_histogram(col = 'black', fill = "orange", aes(y = ..density..), breaks = seq(-10, 150)) + geom_density(col = "purple") + labs(x = "hello", y = 'there', title = "yer")
+
+hist(govn$Value, breaks = seq(-10,120), col = c("orange", "blue"))
+
+```
+
+```{r}
+prot <- read.csv("protein.csv")
+head(prot)
+dim(prot)
+vals <- rowSums(prot[,2:10])
+names(vals) <- prot$Country
+which.max(vals)
+which.min(vals)
+vals <- vals/sum(vals)
+barplot(vals, ylab ="RF", xlab = "Countries", main = "Relative frequency of protein in different conuntries")
+pie(vals)
+```

@@ -1,0 +1,57 @@
+---
+title: "rpractice"
+author: "Evan O'Toole"
+format: docx
+editor: visual
+---
+
+Make a Barplot/historgram and a pie chart:
+
+```{r}
+data <- read.csv('grades.csv')
+new_data <- read.csv('grade.csv')
+head(data)
+```
+
+```{r}
+
+custom_intervals <- cut(data$exam, breaks = c(60, 70, 80, 90, 95))
+
+class(as.numeric(custom_intervals))
+custom_intervals <- as.numeric(custom_intervals)
+old_custom <- custom_intervals
+custom_intervals <- sort(custom_intervals)
+custom_intervals <- table(custom_intervals)
+
+barplot(custom_intervals, names.arg = c("D", "C", "B", "A"))
+hist(old_custom)
+old_custom
+```
+
+```{r}
+new_data
+```
+
+```{r}
+barplot(as.numeric(new_data$Count), names.arg = new_data$Grade, xlab = "Quantity", ylab = "Grade")
+```
+
+```{r}
+library(ggplot2)
+new_df = data.frame(Grade = new_data$Grade,Count = new_data$Count)
+new_df
+ggplot(new_df, aes(x = Grade, y = Count)) + geom_bar(stat = "identity")
+```
+
+```{r}
+head(PlantGrowth)
+ggplot(PlantGrowth, aes(x = group, y = weight)) + geom_histogram(stat = "identity", color = "red", fill = "green", binwidth = 5)
+  #+ geom_density((col = "black"))
+```
+
+```{r}
+PlantGrowth$weight <- as.numeric(PlantGrowth$weight)
+hist(PlantGrowth$weight, prob =TRUE)
+barplot(PlantGrowth$weight)
+PlantGrowth
+```

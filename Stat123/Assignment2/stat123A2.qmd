@@ -1,0 +1,86 @@
+---
+title: "Assignment#2"
+author: "Evan O'Toole"
+format: docx
+editor: visual
+---
+
+Part 1
+
+```{r}
+#a
+str(lynx)
+head(lynx)
+?lynx
+#I used str, head, and ?lynx. the lynx data set is a Time-Series from 1821 to 1934, representing the annual Lynx trappings for each year.
+#b
+years <- seq(1821, 1934)
+#c
+names(lynx) <- years
+#d
+lynx['1867']
+#e
+mean(lynx[1:90])
+```
+
+**PART 2**
+
+```{r}
+#a
+casino <- read.csv('casino.csv')
+#b
+head(casino)
+#c
+friends <- (casino[,1])
+#d
+dim(casino)
+winnings <- as.matrix(casino[,c(2:6)])
+#e
+total <- rowSums(winnings)
+#this vector represents the net loss or earnings for each person/row
+
+#f
+names(total) <- friends
+min(total)
+max(total)
+which.min(total)
+which.max(total)
+#Dwayne lost the most
+#Betty won the most
+
+#h
+mean(total)
+#the average amount won was $5.167
+```
+
+**PART 3**
+
+```{r}
+#(a)
+library(ggplot2)
+govn <- read.csv('Government_expenditure_per_student.csv')
+ggplot(govn, aes(x=Value)) + geom_histogram(aes(y= ..density..),binwidth = 2, fill = "skyblue", color = "black") + labs(title = "Govenment expenditure per student each year", y = "Probability", x = "Expenditure") + geom_density(color = "green")
+#(b)
+#it right skewed and asymetric
+```
+
+**Part 4**
+
+```{r}
+library(ggplot2)
+data <- read.csv('rawgrades.csv')
+f_grades <- factor(data$Grade)
+t_grades <- table(f_grades) / length(data$Grade)
+pie_data <- data.frame(
+  Grade = names(t_grades),
+  Frequency = as.vector(t_grades)
+)
+ggplot(pie_data, aes(x = "", y = Frequency, fill = Grade)) +
+  geom_bar(stat = "identity", width = 1) +  # Bar chart, with identity (not counting)
+  coord_polar(theta = "y") +  # Convert to pie chart
+  theme_void() +  # Remove background and gridlines
+  labs(title = "Grades Pie Chart") +
+  geom_text(aes(label = scales::percent(Frequency)),  # Add relative frequency as labels
+            position = position_stack(vjust = 0.5),     # Place labels in the middle of each slice
+            color = "white")
+```

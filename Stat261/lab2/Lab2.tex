@@ -1,0 +1,424 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={STAT 261 Lab 2},
+  pdfauthor={Fill in your name},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{STAT 261 Lab 2}
+\author{Fill in your name}
+\date{Fill in the date}
+
+\begin{document}
+\maketitle
+
+\hypertarget{general-instructions}{%
+\section{General Instructions}\label{general-instructions}}
+
+\begin{itemize}
+\tightlist
+\item
+  Execute each chunk of code to ensure that your code works properly.\\
+\item
+  Save this .Rmd file and then knit the entire document to pdf.
+\end{itemize}
+
+\hypertarget{learning-outcomes}{%
+\section{Learning outcomes}\label{learning-outcomes}}
+
+\begin{itemize}
+\tightlist
+\item
+  use of \texttt{hist()} to plot histograms of generated/observed data
+  (and appearance customization!)\\
+\item
+  Adding density lines to histograms to model the relationship between
+  the Chi-square and standard normal distributions\\
+\item
+  use of geometric distribution functions, \texttt{rgeom()} and
+  \texttt{dgeom()}\\
+\item
+  understanding how to code (log-)likelihood and (log-)relative
+  likelihood functions in R\\
+\item
+  use of \texttt{optimize()} to find the MLE of your (log-)likelihood
+  function\\
+\item
+  use of \texttt{uniroot()} to find 100p\% likelihood intervals\\
+\item
+  use of \texttt{round()} to present rounded numerical values
+\end{itemize}
+
+\hypertarget{the-normal01-and-chi-squared-distribution.}{%
+\subsection{1. The Normal(0,1) and Chi-squared
+distribution.}\label{the-normal01-and-chi-squared-distribution.}}
+
+In this section, we see the relationship between Normal(0,1) random
+variables and the Chi-squared(1) distribution. Normal(0,1)\^{}2
+\textasciitilde{} Chi-squared(1)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# First generate 1000 random observations from N(0,1)}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{12345}\NormalTok{)}
+\NormalTok{myz }\OtherTok{\textless{}{-}} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{)}
+
+\CommentTok{\# Plot a scaled histogram and overlay normal pdf}
+\NormalTok{h }\OtherTok{\textless{}{-}} \FunctionTok{hist}\NormalTok{(myz, }\AttributeTok{breaks=}\DecValTok{10}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{, }
+    \AttributeTok{main=}\StringTok{"Histogram with Normal Curve"}\NormalTok{, }\AttributeTok{prob=}\ConstantTok{TRUE}\NormalTok{) }
+\NormalTok{xfit}\OtherTok{\textless{}{-}}\FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(myz), }\FunctionTok{max}\NormalTok{(myz), }\AttributeTok{length=}\DecValTok{40}\NormalTok{) }\CommentTok{\#sequence of length 40}
+\NormalTok{yfit}\OtherTok{\textless{}{-}}\FunctionTok{dnorm}\NormalTok{(xfit, }\AttributeTok{mean=}\FunctionTok{mean}\NormalTok{(myz), }\AttributeTok{sd=}\FunctionTok{sd}\NormalTok{(myz)) }\CommentTok{\#normal density}
+\FunctionTok{lines}\NormalTok{(xfit, yfit, }\AttributeTok{col=}\StringTok{"forestgreen"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{50}\NormalTok{) }\CommentTok{\#overlay fitted normal density}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Lab2_files/figure-latex/chi-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# as a little exercise, change the color in line 39 above to "forestgreen" and}
+\CommentTok{\# the linewidth to 50. Congratulations, you have just made your }
+\CommentTok{\# first piece of Data Art!! A very hungry caterpillar :\^{})}
+
+\CommentTok{\# Square these observations, plot a histogram and overlay the chi{-}square(1) pdf}
+\NormalTok{myz2 }\OtherTok{\textless{}{-}}\NormalTok{ myz}\SpecialCharTok{\^{}}\DecValTok{2}
+\NormalTok{h }\OtherTok{\textless{}{-}} \FunctionTok{hist}\NormalTok{(myz2, }\AttributeTok{breaks=}\DecValTok{10}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{, }
+    \AttributeTok{main=}\StringTok{"Histogram with Chi{-}squared(1) Curve"}\NormalTok{, }\AttributeTok{prob=}\ConstantTok{TRUE}\NormalTok{) }
+\NormalTok{xfit }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(myz2), }\FunctionTok{max}\NormalTok{(myz2), }\AttributeTok{length=}\DecValTok{40}\NormalTok{) }
+\NormalTok{yfit }\OtherTok{\textless{}{-}} \FunctionTok{dchisq}\NormalTok{(xfit, }\DecValTok{1}\NormalTok{)    }\CommentTok{\#chi{-}squared(1) density}
+\FunctionTok{lines}\NormalTok{(xfit, yfit, }\AttributeTok{col=}\StringTok{"blue"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{) }\CommentTok{\#overlay Chi{-}squared(1) curve}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Lab2_files/figure-latex/chi-2.pdf}
+
+\hypertarget{generate-n10-observations-from-the-geometric-distribution.}{%
+\subsection{2. Generate n=10 observations from the Geometric
+distribution.}\label{generate-n10-observations-from-the-geometric-distribution.}}
+
+\emph{type ?rgeom() to read which form of the PMF R computes (i.e.~does
+it include or exclude the final successful trial?)}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{54321}\NormalTok{)}
+\NormalTok{n }\OtherTok{\textless{}{-}} \DecValTok{10}
+\NormalTok{geo.dat }\OtherTok{\textless{}{-}} \FunctionTok{rgeom}\NormalTok{(n, }\AttributeTok{prob=}\NormalTok{.}\DecValTok{07}\NormalTok{)   }\CommentTok{\# this generates n geometric observations}
+
+\NormalTok{geo.mle }\OtherTok{\textless{}{-}} \DecValTok{1}\SpecialCharTok{/}\NormalTok{(}\DecValTok{1}\SpecialCharTok{+}\FunctionTok{mean}\NormalTok{(geo.dat)) }\CommentTok{\#We derived this MLE during the basketball tryouts example}
+\NormalTok{geo.mle}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.04048583
+\end{verbatim}
+
+\hypertarget{write-a-function-to-compute-the-log-likelihood-given-the-n-observations-and-plot-the-log-likelihood.}{%
+\subsection{3. Write a function to compute the log-likelihood given the
+n observations and plot the
+log-likelihood.}\label{write-a-function-to-compute-the-log-likelihood-given-the-n-observations-and-plot-the-log-likelihood.}}
+
+In this section, we write a function which computes the Geometric
+log-likelihood given arguments:\\
+* theta, a scalar or vector of probabilities and\\
+* x, a vector of observations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Write a function to compute geometric log{-}likelihood with arguments}
+\CommentTok{\#  theta = scalar or vector of geometric probabilities}
+\CommentTok{\#  x = vector of observations}
+
+\NormalTok{ell }\OtherTok{\textless{}{-}}  \ControlFlowTok{function}\NormalTok{(theta, x)\{}
+\NormalTok{  loglike }\OtherTok{\textless{}{-}} \DecValTok{0}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(x))\{}
+\NormalTok{    loglike }\OtherTok{\textless{}{-}}\NormalTok{ loglike }\SpecialCharTok{+} \FunctionTok{dgeom}\NormalTok{(x[i], }\AttributeTok{prob=}\NormalTok{theta, }\AttributeTok{log=}\ConstantTok{TRUE}\NormalTok{)  }
+      \CommentTok{\#computes the sum of the log of geometric probabilities over each of the observations}
+\NormalTok{  \} }
+  \FunctionTok{return}\NormalTok{(loglike)}
+\NormalTok{\}}
+
+\NormalTok{theta }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FloatTok{0.01}\NormalTok{, }\FloatTok{0.15}\NormalTok{, }\AttributeTok{by=}\NormalTok{.}\DecValTok{005}\NormalTok{)  }\CommentTok{\#a vector sequence of theta values}
+\NormalTok{gloglike }\OtherTok{\textless{}{-}} \FunctionTok{ell}\NormalTok{(theta, geo.dat)    }\CommentTok{\#compute the log{-}likelihood for each value in theta, given data geo.dat}
+\FunctionTok{head}\NormalTok{(}\FunctionTok{cbind}\NormalTok{(theta, gloglike))    }\CommentTok{\#head prints the top values}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      theta  gloglike
+## [1,] 0.010 -48.43363
+## [2,] 0.015 -45.57898
+## [3,] 0.020 -43.90827
+## [4,] 0.025 -42.88912
+## [5,] 0.030 -42.28441
+## [6,] 0.035 -41.96771
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(gloglike }\SpecialCharTok{\textasciitilde{}}\NormalTok{ theta, }\AttributeTok{ylab=}\StringTok{\textquotesingle{}Log{-}Likelihood\textquotesingle{}}\NormalTok{, }\AttributeTok{xlab=}\StringTok{\textquotesingle{}theta\textquotesingle{}}\NormalTok{, }\AttributeTok{type=}\StringTok{\textquotesingle{}l\textquotesingle{}}\NormalTok{) }\CommentTok{\#plot(y \textasciitilde{} x) version}
+\FunctionTok{title}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Geometric Log{-}likelihood for Lab 2, n=\textquotesingle{}}\NormalTok{, n, }\AttributeTok{sep=}\StringTok{\textquotesingle{}\textquotesingle{}}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Lab2_files/figure-latex/log-like-1.pdf}
+
+\hypertarget{compute-the-mle-using-the-function-we-defined.}{%
+\subsection{4. Compute the MLE using the function we
+defined.}\label{compute-the-mle-using-the-function-we-defined.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#?optimize   \#see the arguments and outputs for optimize; see optional arguments ...}
+\CommentTok{\# we pass a function to optimize, starting interval, and any other arguments required by ell}
+
+\NormalTok{thetahat }\OtherTok{\textless{}{-}} \FunctionTok{optimize}\NormalTok{(ell, }\FunctionTok{c}\NormalTok{(.}\DecValTok{02}\NormalTok{, .}\DecValTok{10}\NormalTok{), }\AttributeTok{maximum=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{x=}\NormalTok{geo.dat)}
+\NormalTok{thetahat   }\CommentTok{\#how does the maximum compare with 1/(1+mean(geo.dat)) computed above?}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $maximum
+## [1] 0.04047153
+## 
+## $objective
+## [1] -41.86282
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{thetahat}\SpecialCharTok{$}\NormalTok{maximum  }\CommentTok{\#extract the maximum}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.04047153
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{thetahat}\SpecialCharTok{$}\NormalTok{objective  }\CommentTok{\#extract value of function ell at maximum}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -41.86282
+\end{verbatim}
+
+\hypertarget{write-a-function-to-compute-the-log-relative-likelihood-rtheta-and-graph.}{%
+\subsection{5. Write a function to compute the log relative likelihood,
+r(theta) and
+graph.}\label{write-a-function-to-compute-the-log-relative-likelihood-rtheta-and-graph.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Function to compute the log relative likelihood, r(theta)}
+\CommentTok{\#  theta = scalar or vector of Binomial probabilities}
+\CommentTok{\#  thetahat = the MLE of theta}
+\CommentTok{\#  x = vector of observations}
+
+\NormalTok{logR }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(theta, thetahat, x)\{}
+  \FunctionTok{ell}\NormalTok{(theta, x) }\SpecialCharTok{{-}} \FunctionTok{ell}\NormalTok{(thetahat, x)}
+\NormalTok{\}}
+
+\FunctionTok{logR}\NormalTok{(theta, thetahat}\SpecialCharTok{$}\NormalTok{maximum, geo.dat)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] -6.570816e+00 -3.716168e+00 -2.045456e+00 -1.026300e+00 -4.215957e-01
+##  [6] -1.048979e-01 -7.555313e-04 -6.052590e-02 -2.510181e-01 -5.485788e-01
+## [11] -9.357624e-01 -1.399338e+00 -1.929039e+00 -2.516742e+00 -3.155912e+00
+## [16] -3.841222e+00 -4.568272e+00 -5.333388e+00 -6.133478e+00 -6.965914e+00
+## [21] -7.828448e+00 -8.719145e+00 -9.636329e+00 -1.057854e+01 -1.154450e+01
+## [26] -1.253310e+01 -1.354334e+01 -1.457435e+01 -1.562537e+01
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Function to compute the log relative likelihood {-} ln(p) for }
+\CommentTok{\#      100p\% Likelihood interval computations}
+\CommentTok{\#  theta = scalar or vector of Binomial probabilities}
+\CommentTok{\#  thetahat = the MLE of theta}
+\CommentTok{\#  x = vector of observations}
+\NormalTok{logR.m.lnp }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(theta, thetahat, x, p) \{}\FunctionTok{logR}\NormalTok{(theta, thetahat, x) }\SpecialCharTok{{-}} \FunctionTok{log}\NormalTok{(p)\}}
+
+\NormalTok{p }\OtherTok{\textless{}{-}}\NormalTok{ .}\DecValTok{1}  \CommentTok{\#10\% likelihood interval}
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{logR.m.lnp}\NormalTok{(theta, thetahat}\SpecialCharTok{$}\NormalTok{maximum, geo.dat, p) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ theta, }\AttributeTok{ylab=}\StringTok{\textquotesingle{}r(theta){-}ln(p)\textquotesingle{}}\NormalTok{,}
+     \AttributeTok{xlab=}\StringTok{\textquotesingle{}theta\textquotesingle{}}\NormalTok{, }\AttributeTok{type=}\StringTok{\textquotesingle{}b\textquotesingle{}}\NormalTok{)}
+\FunctionTok{abline}\NormalTok{(}\AttributeTok{h=}\DecValTok{0}\NormalTok{)  }\CommentTok{\#add horizontal line at zero}
+\FunctionTok{title}\NormalTok{(}\StringTok{\textquotesingle{}Lab 2, Log Relative Likelihood {-} ln(p)\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Lab2_files/figure-latex/log_relative-1.pdf}
+
+\hypertarget{compute-the-10-likelihood-interval-as-the-roots-of-rtheta---ln.10-0}{%
+\subsection{6. Compute the 10\% Likelihood Interval as the roots of
+r(theta) - ln(.10) =
+0}\label{compute-the-10-likelihood-interval-as-the-roots-of-rtheta---ln.10-0}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#?uniroot  \#see the arguments for uniroot}
+\CommentTok{\# use the graph to obtain starting interval for root finding search}
+
+\CommentTok{\#Likelihood intervals, supply the function, starting interval and arguments }
+\NormalTok{lower }\OtherTok{\textless{}{-}} \FunctionTok{uniroot}\NormalTok{(logR.m.lnp, }\FunctionTok{c}\NormalTok{(.}\DecValTok{01}\NormalTok{, .}\DecValTok{04}\NormalTok{), thetahat}\SpecialCharTok{$}\NormalTok{maximum, geo.dat, p)}
+\NormalTok{lower}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $root
+## [1] 0.01905715
+## 
+## $f.root
+## [1] 0.002134804
+## 
+## $iter
+## [1] 5
+## 
+## $init.it
+## [1] NA
+## 
+## $estim.prec
+## [1] 6.103516e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{upper }\OtherTok{\textless{}{-}} \FunctionTok{uniroot}\NormalTok{(logR.m.lnp, }\FunctionTok{c}\NormalTok{(.}\DecValTok{06}\NormalTok{, .}\DecValTok{10}\NormalTok{), thetahat}\SpecialCharTok{$}\NormalTok{maximum, geo.dat, p)}
+\NormalTok{upper}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $root
+## [1] 0.0732256
+## 
+## $f.root
+## [1] 0.0006077995
+## 
+## $iter
+## [1] 4
+## 
+## $init.it
+## [1] NA
+## 
+## $estim.prec
+## [1] 6.103516e-05
+\end{verbatim}
+
+\hypertarget{summary}{%
+\section{Summary:}\label{summary}}
+
+The maximum likelihood estimate of theta is, 0.0404715 and its 10\%
+likelihood interval is (0.0190571, 0.0732256).
+
+(Rounded version) The maximum likelihood estimate of theta is, 0.04 and
+its 10\% likelihood interval is (0.019, 0.073).
+
+\end{document}

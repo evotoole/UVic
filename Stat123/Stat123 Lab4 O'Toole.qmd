@@ -1,0 +1,65 @@
+---
+title: "Stat123 Lab5 O'Toole"
+format: docx
+editor: visual
+author: "Evan O'Toole"
+---
+
+```{r}
+#install.packages("palmerpenguins")
+```
+
+QUESTION #1
+
+```{r}
+library(palmerpenguins)
+library(ggplot2)
+library(dplyr)
+#a)
+head(penguins)
+dim(penguins)
+str(penguins)
+
+#b)
+ggplot(data = penguins, aes(x = body_mass_g)) + geom_histogram() + geom_vline(xintercept = mean(penguins$body_mass_g, na.rm = TRUE), linetype = "dashed", linewidth = 1.0) + ggtitle("Histogram of penguins weights and the mean")
+
+#c)
+#It seems to be a bit right skewed and not very symmetric. so use median and 
+median(penguins$body_mass_g, na.rm = TRUE)
+quantile(penguins$body_mass_g, na.rm = TRUE)
+```
+
+QUESTION #2
+
+```{r}
+#a)
+#head(iris)
+g <- iris |> 
+  filter(Sepal.Length > 4.6 & Petal.Width > 0.5)
+head(g)
+#b)
+i <- iris |> arrange(Sepal.Width)
+head(i)
+#c) 
+i <- iris |> mutate(proportion = Sepal.Length/Sepal.Width)
+head(i)
+#d)
+a <- iris |> select(Sepal.Length, Sepal.Width, Petal.Length)
+head(a)
+#e)
+np <- iris |> select(!Petal.Width)
+head(np)
+
+#f)
+iris |> 
+  select(Sepal.Width, Sepal.Length) |> 
+  head()
+
+#g)
+i <- iris |> select(Sepal.Length, Sepal.Width, Petal.Length) |> arrange(Sepal.Length) |> arrange(Sepal.Width)
+head(i)
+#h)
+iris |> summarize(avg_slength = mean(Sepal.Length))
+#i)
+iris |> group_by(Species) |> summarize(avg_SL = mean(Sepal.Length, na.rm = TRUE), max_SL = max(Sepal.Length, na.rm = TRUE), min_SL = min(Sepal.Length, na.rm = TRUE))
+```
