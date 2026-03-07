@@ -1,0 +1,155 @@
+---
+title: "KnowledgeTest"
+format: docx
+editor: visual
+---
+
+```{r}
+n = 10
+k = 0
+for (i in 1:n){
+  k = k + i^3
+}
+```
+
+```{r}
+sum(seq(1:10)^3)
+```
+
+```{r}
+library(tidyverse)
+#a)
+x = runif(500, 0 , 10)
+df = as.data.frame(x)
+ggplot(df, aes(x = x)) + geom_histogram(col = "blue", fill = "green") + ggtitle("here is the tile") + labs(x = "xable", y = "yable")
+quantile(x, 0.1)
+
+#b)
+newx <- sample(x, 500, replace = TRUE)
+df2 <- as.data.frame(newx)
+ggplot(df2, aes(x = newx)) + geom_histogram(col = "blue", fill = "green") + ggtitle("here is the tile") + labs(x = "xable", y = "yable")
+quantile(newx, 0.1)
+
+#c)
+q10 = numeric(3000)
+for (i in 1:3000){
+  samp =  sample(x, 500, replace = TRUE)
+  s = var(samp)
+  q10[i] = s
+}
+#head(q10)
+print("QUANTILE")
+
+mean(q10)
+
+
+df = as.data.frame(q10)
+ggplot(df, aes(x = q10)) + geom_histogram(col = "blue", fill = "green", aes(y = ..density..)) + geom_density(col = "red") 
+
+ggplot(df, aes(x = q10)) + geom_density(col ="black")
+hist(q10, col = "blue", fill = "green", prob = TRUE)
+
+
+ggplot(df, aes(x = q10)) + geom_density(fill = "yellow", col = "blue")
+
+
+```
+
+```{r}
+x2 = rexp(500, rate = 1/5)
+quantile(x2, 0.1)
+
+q10 = numeric(5000)
+for (i in 1:5000){
+  sam = sample(x2, 500, replace = TRUE)
+  q = quantile(sam, 0.1)
+  q10[i] = q
+}
+mean(q10)
+df = as.data.frame(q10)
+ggplot(df, aes(x = q10)) + geom_histogram(aes(y=..density..), fill = "orange", col = "red", binwidth = 0.009) + xlim(0, 1)  + geom_density()
+
+hist(df$q10, prob = TRUE, col = "blue", fill = "green")
+lines(density(df$q10), col = "red")
+```
+
+```{r}
+d8 = read.csv("data_wk8.csv")
+quantile(d8$X, c(0,1))
+library(tidyverse)
+
+ggplot(d8, aes(x = X)) + geom_histogram(col = "blue", fill = "green", aes(y= ..density..)) + geom_density(col = "red") + ggtitle("histogram and density curve for X") + labs(x = "frequency", y = "value") + xlim(40, 62)
+
+hist(d8$X, col = "blue", prob = TRUE, xlab = "HELLO", main = "yees")
+lines(density(d8$X), col = "orange", prob = TRUE)
+
+# maybe normal it is somewhat symmetric but further analysis needed.
+qlow = quantile(d8$X, 0.025)
+qhigh = quantile(d8$X, 0.975)
+mea = mean(d8$X)
+stan = sd(d8$X)
+no = qnorm(c(0.025, 0.975), sd = stan, mean = mea)
+no
+qlow
+qhigh
+
+qqnorm(d8$X)
+qqline(d8$X, col = "red")
+
+shapiro.test(d8$X)
+```
+
+```{r}
+library(tidyverse)
+set.seed(42)
+age = sample(18:65, 50, replace = TRUE)
+height = runif(50, 150, 190)
+weight = runif(50, 45, 100)
+gender = sample(c("male", "female"), 50, replace = TRUE)
+data = data.frame(cbind(gender, weight, height, age))
+```
+
+```{r}
+data$height = as.numeric(data$height)
+data$weight = as.numeric(data$weight)
+boxplot(data$height, border = "purple", col = "blue", main = "histogram", xlab= "hello", ylab = "there")
+
+ggplot(data, aes(x = gender, y = height, fill = gender)) + geom_boxplot() + labs(y = "height", x = "gender", scale_fill_manual(values = c("pink", "green"))) + ggtitle("gender and their respective heights") 
+
+boxplot(height ~ gender, data, col = c("green", "pink"), xlab = "Gender", ylab = "height", main = "boxplt of gender and their respective heights in base r")
+
+ggplot(data, aes(x = height, y = weight)) + geom_boxplot()
+
+
+
+```
+
+```{r}
+iris |> 
+  group_by(Species)|>
+    summarize(me = mean(Petal.Length))
+  
+iris |>
+  arrange(Sepal.Length)
+
+iris |>
+  mutate(Ratio = Sepal.Width/Sepal.Length, .before = 1)
+  
+iris |>
+  group_by(Species) |>
+  summarize(me = mean(Petal.Length))
+```
+
+```{r}
+x3 = c(rnorm(250, 1, 2), rnorm(250, 9 ,2))
+sd(x3)
+
+vec = as.numeric(3000)
+for (i in 1:3000){
+  samp = sample(x3,500, replace = TRUE)
+  vec[i] = sd(samp)
+}
+mean(vec)
+
+
+```

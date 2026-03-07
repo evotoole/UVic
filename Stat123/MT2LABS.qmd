@@ -1,0 +1,224 @@
+---
+title: "MT2LABS"
+format: docx
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+head(penguins)
+df <- penguins
+ggplot(df, aes(x= body_mass_g)) + geom_histogram(col = "green", fill = "blue") +labs(x= "pengiu") + ggtitle("BODY MASS OF PENGUINS") + geom_vline(xintercept = mean(df$body_mass_g, na.rm = TRUE), linetype = "dashed", linewidth = 1.5)
+#it is right skewed and and assymetric
+#the median is likely less than the mean
+median(df$body_mass_g, na.rm = TRUE)
+mean(df$body_mass_g, na.rm = TRUE)
+
+#still rights skewed
+#because it is skewed an assymetric more outliers so use median and IQR, rather
+#than the mean and the sd
+quantile(df$body_mass_g, na.rm = TRUE)
+median(df$body_mass_g, na.rm = TRUE)
+
+```
+
+```{r}
+df <- iris
+head(iris)
+filtered <- df |> 
+  filter(Sepal.Length >= 4.6 & Petal.Width >= 0.5)
+filtered
+
+arranged <- df |>
+  arrange(Sepal.Width)
+arranged
+
+new <- df |>
+  mutate(proportion = Sepal.Length/Sepal.Width)
+new
+
+selected <- df |>
+  select(c(Sepal.Length, Sepal.Width, Petal.Length))
+selected
+
+not <- df |>
+  select(!Petal.Width)
+not
+
+df |>
+  select(c(Sepal.Length, Sepal.Width)) |>
+  head()
+
+df |> 
+  select(Sepal.Length, Sepal.Width) |>
+  arrange(Sepal.Length, Sepal.Width)
+
+df |> 
+  summarize(avgslength = mean(Sepal.Length))
+
+df |>
+  group_by(Species) |>
+  summarize(S_min = min(Sepal.Length), S_max = max(Sepal.Length), M_max = mean(Sepal.Length))
+
+df |> select(starts_with("P"))
+
+```
+
+```{r}
+d8 <- read.csv("data_wk8.csv")
+quantile(d8$X)
+min(d8$X)
+max(d8$T)
+
+ggplot(d8, aes(x = X)) + geom_histogram(aes(y = ..density..), fill = "blue", col ="green", binwidth = 1) + geom_density(col = "red") + xlim(40, 62) + ggtitle("Histogram and Density Curve of X") + labs(x = "This is good", y = "yes")
+
+
+# it may be normal because it appears symmetric but needs further investigation.
+mean(d8$X)
+median(d8$X)
+#also the mean and median are very close which is a good sign
+
+qhigh <- d8$X |> quantile(0.975)
+qlow <- d8$X |> quantile(0.025)
+qhigh
+qnorm(0.975, mean = mean(d8$X), sd = sd(d8$X))
+qnorm(0.025, mean = mean(d8$X), sd = sd(d8$X))
+qlow
+#the values are close so use further measures
+
+qqnorm(d8$X)
+qqline(d8$X, col = "red")
+
+shapiro.test(d8$X)
+#The high W value signifies that it is normal
+#BUT the small p val causes us to reject this hypothesis
+```
+
+```{r}
+d8
+ggplot(d8, aes(x = T)) + geom_histogram(aes(y = ..density..)) + geom_density(col = "blue")
+
+shapiro.test(d8$T)
+qqnorm(d8$T)
+qqline(d8$T, col = "red")
+```
+
+```{r}
+i <- 0
+n<-20
+for (num in 1:n){
+  i <- i + num^3
+}
+i
+sum((1:n)^3)
+
+x1 <- runif(500, 0, 10)
+df <- as.data.frame(x1)
+ggplot(df, aes(x = x1)) + geom_histogram(col = "blue", fill = "green") + ggtitle("practice") + labs(x = "even more practice", y = "the most practice")
+vect <- c()
+for (i in 1:500){
+  new_samp <- sample(x1, size = 500, replace = TRUE)
+  vect <- c(vect, new_samp)
+}
+quantile(x1, 0.1)
+quantile(vect, 0.1)
+
+q10 <- c()
+for (i in 1:500){
+  new_samp <- quantile(sample(x1, size = 500, replace = TRUE), 0.1)
+  q10 <- c(q10, new_samp)
+}
+print("EFSLEFJ")
+quantile(x1, 0.1)
+mean(q10)
+df <- as.data.frame(q10)
+ggplot(df, aes(x = q10)) + geom_histogram(aes(y = ..density..), col = "orange", fill = "purple") + geom_density(col = "red")
+```
+
+```{r}
+x2 <- rexp(500, rate = 1/5)
+
+q10 <- c()
+for (i in 1:5000){
+  samp <- sample(x2, 500, replace = TRUE)
+  q10 <- c(q10, var(samp))
+}
+varx <- var(x2)
+mean(q10)
+varx
+q10 <- as.data.frame(q10)
+ggplot(q10, aes(x = q10)) + geom_histogram(aes(y = ..density..)) + geom_density()
+
+```
+
+```{r}
+set.seed(42)
+age = sample(18:65, 50, replace = TRUE)
+height = runif(50,150,190)
+weight = runif(50,45,100)
+gender = sample(c("Male", "Female"), 50, replace = TRUE)
+data = data.frame(Age = age, Height = height, Weight = weight, Gender = gender)
+
+data |>
+  select("Age", "Height")
+
+data |>
+  filter(Age > 30) |>
+  head()
+
+data |>
+  arrange(desc("Height"))
+
+data |>
+  select(Age) |>
+  summarize(amean = mean(Age), amedian = median(Age), asd = sd(age))
+
+quantile(data$Age, c(0.25,0.75))
+
+boxplot(data$Height, xlab = "hello", main = "world", ylab = "yes pl")
+
+ggplot(data, aes(y = Height)) + geom_boxplot()
+head(gender)
+head(height)
+boxplot(Height ~ gender, data = data, col = c("green", "pink"), border = "orange", main ="hele", xlab = "efeef")
+
+ggplot(data, aes(x = gender, y = height)) + geom_boxplot() + labs(scale_fill_manual(values = c("orange", "red")))
+
+boxplot(data$Height, col = "red", xlab = "prac", ylab = "perf", main ="perfef")
+
+ggplot(data, aes(x = height)) + geom_boxplot(col = "blue")
+
+boxplot(data$Height ~ gender)
+
+ggplot(data, aes(x = gender, y = Height)) +geom_boxplot()
+```
+
+```{r}
+head(iris)
+ir <- iris |>
+  rename(iris.Species = Species)
+
+ir <- iris |>
+  mutate(Ratio = Sepal.Width/Sepal.Length)
+
+ir <- iris |>
+  mutate(Ratio = Sepal.Width/Sepal.Length) |>
+  relocate(Ratio, .before = Sepal.Length)
+ir
+
+ir <- iris |>
+  mutate (Ratio = Sepal.Width/Sepal.Length) |>
+  relocate(Ratio, .after = Sepal.Width)
+
+ir <- iris |>
+  group_by(Species) |>
+  summarize(mmane = mean(Petal.Length))
+ 
+ir <- iris |>
+  
+```
+
+```{r}
+
+```

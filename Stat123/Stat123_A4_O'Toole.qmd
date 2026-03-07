@@ -1,0 +1,90 @@
+---
+title: "Stat123_A4_"
+format: docx
+author: "Evan O'Toole"
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+#a)
+admissions <- read_csv("AdmissionPredict.csv")
+
+ggpairs(admissions |> 
+  select(`TOEFL Score`, `GRE Score`, UGPA, `University Rating`, SOP, LOR, `Chance of Admit`))
+
+```
+
+```{r}
+#b)
+admission <- admissions |> select(`GRE Score`, `TOEFL Score`, UGPA, `Chance of Admit`)
+```
+
+```{r}
+#c)
+ggpairs(admission)
+#the correlation values are generally higher and there is a more clear linear relationship
+#between the data.
+```
+
+```{r}
+#d)
+plot(admission$UGPA, admission$`Chance of Admit`, 
+     main = "UGPA vs. Chance of Admit", 
+     xlab = "UGPA", ylab = "Chance of Admit")
+
+cor(admission$UGPA, admission$`Chance of Admit`)
+
+ugpa_model <- lm(`Chance of Admit` ~ UGPA, data = admission)
+summary(ugpa_model)
+```
+
+```{r}
+#e)
+q25 <- quantile(admission$UGPA, 0.25)
+q50 <- quantile(admission$UGPA, 0.50)
+q75 <- quantile(admission$UGPA, 0.75)
+
+percentiles <- data.frame(UGPA = c(q25, q50, q75))
+percentiles
+
+predict(ugpa_model, newdata = percentiles, interval = "predict", level = 0.88)
+
+#f)the residuals may not be evenly distributed across the data by observation. this could be bad because the model could be less accurate at lower values and more accurate at higher values etc.
+```
+
+```{r}
+#2 a)
+age <- c(2,3,4,5,8,12,14,17,21,28,39,50,67,83)
+run.time <- c(60,55,40,37,32,26,18,16,17,17,23,29,42,59)
+
+#age is explanatory and runtime is response
+```
+
+```{r}
+#b)
+ggplot(data = NULL, aes(x = age, y = run.time)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = TRUE) +
+  labs(x = "Age (years)", y = "Run Time (seconds)", 
+       title = "Running Time vs. Age (Quadratic Fit)") +
+  theme_minimal()
+```
+
+```{r}
+#c)
+agesq <- age^2
+quad_model <- lm(run.time ~ age + agesq)
+summary(quad_model)
+```
+
+```{r}
+#d)
+predict(quad_model, newdata = data.frame(age = 45, agesq = 45^2), interval = "predict")
+```
+
+```{r}
+#e)
+summary(quad_model)$r.squared * 100
+```

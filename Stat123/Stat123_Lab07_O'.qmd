@@ -1,0 +1,195 @@
+---
+title: "Lab 7"
+format: docx
+editor: visual
+author: "Evan O"
+---
+
+## 1. Sometimes we can avoid for-loops.
+
+Doing computations in different ways.
+
+```{r}
+
+# Show your result for each part. They should be the same.
+
+# (a) for loop
+
+#n <- 10
+n <- 20
+x <- 0
+for (num in 1:n){
+  x <- x + num**3
+}
+x
+
+# (b) without loops
+
+(sum((1:n)**3))
+# (c) formula (require Math knowledge)
+
+
+
+```
+
+## 2. Bootstrapped Sampling with for-loops
+
+```{r}
+
+library(ggplot2)
+
+
+# This code will generate a vector of 500 data points. Let us assume this is a 
+# representative sample of the population.
+
+x1 <- runif(500, 0, 10)
+
+#(a) histogram of the sample. Adjust the binwidth value so
+# your histogram looks informative.
+df <- as.data.frame(x1)
+head(df)
+ggplot(df, aes(x = x1)) + geom_histogram(fill = "green", col="blue")
+
+quantile(x1, 0.1)
+
+#(b) 
+
+x2 <- sample(x1, size = 500, replace = TRUE)
+quantile(x2, 0.1)
+#yes they are quite similar
+
+#(c)
+q10 <- c()
+for (num in 1:3000){
+  x2 <- sample(x1, size = 500, replace = TRUE)
+  new <- as.vector(quantile(x2, 0.1))
+  q10 <- c(q10, new)
+  
+}
+#print(q10)
+
+#(d) histogram of approximate sampling distribution. Adjust the binwidth value so
+# your histogram looks informative.
+q10 <- as.data.frame(q10)
+ggplot(q10, aes(x=q10)) + geom_histogram(fill = "green", col = "blue")
+
+#(e) 
+q10est <- mean(q10$q10)
+print(q10est)
+
+#(f) A 95% bootstrapped confidence interval
+con <- 0.95
+low <- (1-con)/2
+high <- 1-low
+
+quantile(q10$q10, c(low,high))
+
+
+```
+
+## 3. Different Population Shapes
+
+```{r}
+
+# A different population shape
+x2 <- rexp(500, rate = 1/5)
+
+# (a) histogram of the sample. Adjust the binwidth value so your histogram looks informative.
+df <- as.data.frame(x2)
+head(df)
+
+ggplot(df, aes(x = x2)) + 
+  geom_histogram(fill = "green", col = "blue")
+
+# Calculate the variance of the sample
+var(x2)
+
+# (b) Same thing again to verify variance
+sampx2 <- sample(x2, size = 500, replace = TRUE)
+var(sampx2)  
+
+# (c) Now, we perform bootstrapping using `sample` to sample with replacement
+q10 <- c()  
+
+for (num in 1:3000) {  
+  x2_sample <- sample(x2, size = 500, replace = TRUE)
+  new <- var(x2_sample) 
+  q10 <- c(q10, new)  
+}
+
+# (d) histogram of approximate sampling distribution of variance
+q10 <- as.data.frame(q10)
+ggplot(q10, aes(x = q10)) + 
+  geom_histogram(fill = "green", col = "blue")
+
+# (e) Calculate the mean of the approximate sampling distribution
+q10est <- mean(q10$q10)
+print(q10est)
+
+# (f) A 90% bootstrapped confidence interval
+con <- 0.90
+low <- (1 - con) / 2
+high <- 1 - low
+
+# Compute the quantiles for the 90% confidence interval
+quantile(q10$q10, c(low, high))
+#
+```
+
+## 4. Another Population Shapes
+
+1.  <div>
+
+    -   <div>
+
+        ```{r}
+
+        x2 <- c(rnorm(25000, 1, 2), rnorm(25000, 9, 2))
+
+        # (a) histogram of the sample. Adjust the binwidth value so your histogram looks informative.
+        df <- as.data.frame(x2)
+        head(df)
+
+        ggplot(df, aes(x = x2)) + 
+          geom_histogram(fill = "green", col = "blue")
+
+
+        sd(df$x2)
+
+        # (b) Same thing again to verify standard deviation
+        sampx3 <- sample(x2, size = 25000, replace = TRUE)
+        sd(sampx3)  
+
+
+        # (c) Perform bootstrapping using `sample` to sample with replacement
+        q10 <- c()  
+
+        for (num in 1:3000) {  # Repeating 3000 times
+          x2_sample <- sample(x2, size = 500, replace = TRUE)
+          new <- var(x2_sample) 
+          q10 <- c(q10, new)  
+        }
+
+        # (d) histogram of approximate sampling distribution of variance
+        q10 <- as.data.frame(q10)
+        ggplot(q10, aes(x = q10)) + 
+          geom_histogram(fill = "green", col = "blue")
+
+        # (e) Calculate the mean of the approximate sampling distribution
+        q10est <- mean(q10$q10)
+        print(q10est)
+
+        # (f) A 99% bootstrapped confidence interval
+        con <- 0.99
+        low <- (1 - con) / 2
+        high <- 1 - low
+
+        # Compute the quantiles for the 99% confidence interval
+        quantile(q10$q10, c(low, high))
+
+
+        ```
+
+        </div>
+
+    </div>

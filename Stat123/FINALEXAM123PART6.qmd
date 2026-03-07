@@ -1,0 +1,22 @@
+---
+title: "FINALEXAM123PART6"
+format: docx
+editor: visual
+---
+
+```{r}
+library(ggplot2)
+set.seed(4172025)
+Weather = sample(c("rainy", "cloudy", "sunny"), 100, replace = TRUE)
+Time = sample(c("Morning", "Afternoon", "Night"), 100, replace = TRUE)
+#a)
+tab = table(Weather, Time)
+barplot(tab, main = "Stacked barplot of weather and time", xlab = "Time", ylab = "Weather", col = c("blue", "green", "pink")) 
+
+#b)
+WT.data <- data.frame(Weather, Time)
+ggplot(WT.data) + geom_bar(aes(Time, fill = Weather)) + labs(title = "Stacked barplot of weather and time", x = "Time", y = "Weather")
+
+#c)
+ggplot(WT.data) + geom_bar(aes(x = Weather, fill = Time), position = "dodge") + labs(title = "Side by side plot for weather and time")
+```

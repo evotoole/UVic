@@ -1,0 +1,283 @@
+---
+title: "FinalsPractice"
+format: docx
+editor: visual
+author: "Evan O'Toole"
+---
+
+```{r} #LAB 1}
+countries <- c("Switzerland", "Germany", "Austria", "USA", "Russia")
+countries[1:4]
+countries[4]
+
+nums <- seq(20, 201, 1)
+length(nums)
+sum(nums)
+mean(nums)
+
+sleep <- c(8,9,9,9,9,7,6)
+days <- c("Monday", "Tuesday", "Wednesday", "Thursday","Friday", "Saturday", "Sunday")
+names(sleep) <- days
+sleep["Saturday"]
+sleep[6]
+```
+
+```{r}
+library(tidyverse)
+#Lab 2
+Fdata <- read.csv("FlowerData.csv")
+class(Fdata)
+
+FlowerMatrix = cbind(Fdata$Age..days., Fdata$Height..cm.)
+colnames(FlowerMatrix) <-c("Age (in days)", "Height (in cm)")
+rownames(FlowerMatrix) <- Fdata$Individual
+head(FlowerMatrix)
+
+mean(FlowerMatrix[1])
+mean(FlowerMatrix[2])
+which.max(FlowerMatrix[, 2])
+which.min(FlowerMatrix[, 2])
+which.max(FlowerMatrix[, 1])
+which.min(FlowerMatrix[, 1])
+
+Fdata |>
+   filter(Individual == "e")
+```
+
+```{r}
+library(readxl)
+sfo <- read_excel("SFO_Recovery_Onsite_December_2020.xlsx", sheet = "Data")
+dim(sfo)
+Q4 <- sfo$Q4
+Q4.tab <- table(Q4)
+names(Q4.tab) <- c("he", "he", 'e3', 'ef', 'e3')
+Q4.tab <- Q4.tab/sum(Q4.tab)
+#fac
+#Q4.tab 
+barplot(Q4.tab, xlab = "This is x", ylab = "this is y (rfreq", col = c("red","blue",'green','purple','orange'))
+```
+
+```{r}
+library(palmerpenguins)
+data <- penguins
+head(data)
+library(tidyverse)
+colnames(data)
+ggplot(data, aes(x = body_mass_g)) + geom_histogram(col = 'blue', fill = 'green') + labs(title = "penguin body mass", y = "y lable", x = "xlable") + geom_vline(xintercept = mean(penguins$body_mass_g, na.rm = TRUE),
+linetype = "dashed", linewidth = 1.0)
+mean(data$body_mass_g, na.rm = TRUE)
+#right skewed and asymetric
+#this means that the median is less than the mean
+median(data$body_mass_g, na.rm = TRUE)
+
+ggplot(data, aes(y = flipper_length_mm, x = body_mass_g)) + geom_line(col = "red")
+```
+
+```{r}
+d8 <- read.csv("data_wk8.csv")
+quantile(d8$X)
+library(tidyverse)
+ggplot(d8, aes(x= X, y = after_stat(density))) + geom_histogram(col = "blue", fill = "green") + geom_density(col = "red") + xlim(42, 60)
+
+#it looks like it could be normal. it is somwhat symmetric and bellcurve like
+
+qhigh <- qnorm(c(0.975), mean = mean(d8$X, na.rm = TRUE), sd = sd(d8$X, na.rm = TRUE))
+qlow <- qnorm(c(0.025), mean = mean(d8$X, na.rm = TRUE), sd = sd(d8$X, na.rm = TRUE))
+
+qqnorm(d8$X)
+qqline(d8$X)
+shapiro.test(d8$X)
+
+ggplot(d8, aes(x = T, after_stat(density))) +geom_histogram()+ geom_density(col = "blue")
+quantile(d8$T, 0.975)
+qnorm(0.975, mean = mean(d8$T, na.rm = TRUE), sd = sd(d8$T, na.rm = TRUE))
+qqnorm(d8$T)
+qqline(d8$T)
+shapiro.test(d8$T)
+```
+
+```{r}
+n <- 10
+k <- 0
+for (i in 1:n)
+  k <- k + i^3
+
+sum((1:n)^3)
+
+library(ggplot2)
+x1 <- runif(500, 0 ,10)
+x2 <- as.data.frame(x1)
+ggplot(x2, aes(x = x1, y = after_stat(density))) + geom_histogram(col = "blue", fill = "green") + labs(x = "x lable", y = "y lable", title =  "title") + geom_density(col = "orange")
+
+x1 <- as.vector(x1)
+samp <- sample(x1, 500, replace = TRUE)
+quantile(samp, 0.1)
+quantile(x1, 0.1)
+
+q10 <- as.numeric(3000)
+for (i in 1:3000){
+  cur_samp <- sample(x1, 500, replace = TRUE)
+  quant <- quantile(cur_samp, 0.1)
+  q10[i] <- quant
+}
+mean(q10)
+data <- as.data.frame(q10)
+ggplot(data, aes(x = q10, y = after_stat(density))) + geom_histogram(col = "blue", fill = "green") + geom_density(col = "red") 
+quantile(q10, c(0.025, 0.975))
+
+x2 <- runif(500, 1/5)
+new <- as.numeric(3000)
+for (i in 1:3000){
+    cur <- sample(x2, 500, replace = TRUE)
+    new[i] <- quantile(cur, 0.975)
+}
+mean(new)
+quantile(x2, 0.975)
+```
+
+```{r}
+library(tidyverse)
+library(GGally)
+data <- read.csv("AdmissionPredict.csv")
+colnames(data)
+admission <- as.data.frame(cbind(data$LOR, data$SOP, data$University.Rating, data$Chance.of.Admit))
+ggpairs(admission)
+cor(x = data$LOR, y = data$Chance.of.Admit)
+model <- lm(Chance.of.Admit ~ UGPA, data = data)
+summary(model)
+vec1 <- data$LOR
+q1<-quantile(vec1, 0.25)
+q2<-quantile(vec1, 0.5)
+q3<-quantile(vec1, 0.75)
+nedata <- data.frame(UGPA = c(q1,q2,q3))
+predict(model, newdata = nedata, interval="predict", level = 0.88)
+
+age = c(2,3,4,5,8,12,14,17,21,28,39,50,67,83)
+run.time = c(60,55,40,37,32,26,18,16,17,17,23,29,42,59)
+#age is the explanatory variable and run.time is the response variable
+plot(age, run.time)
+age.sq <- age^2
+medel <- lm(run.time~age)
+summary(medel)
+model2 <- lm(run.time ~ age + age.sq)
+summary(model2)
+#regression equation: 0.02373x^2 -1.76x + 48.63
+
+newframe <- data.frame(c(age = 45, age.sq = 45^2))
+predict(model2, newdata = newframe, interval = "predict", level = 0.88)
+```
+
+```{r}
+
+```
+
+```{r}
+source("chat_GPT.R")
+
+response <- chat_gpt("why wont this work: ggplot(data) + geom_bar(aes(x = Height, fill = Gender), position = \"dodge\")", model = "gpt-4o")
+cat(response)
+```
+
+```{r}
+library(ggplot2)
+
+# Create some sample data
+data1 <- data.frame(x = rnorm(100, mean = 0, sd = 1))
+data2 <- data.frame(x = rnorm(100, mean = 2, sd = 1))
+
+# Create separate histograms for each dataset
+p <- ggplot() +
+  geom_histogram(data = data1, aes(x = x, fill = "Dataset 1"), 
+                 position = position_dodge(width = 1), bins = 20) +
+  geom_histogram(data = data2, aes(x = x, fill = "Dataset 2"), 
+                 position = position_dodge(width = 1), bins = 20) +
+  scale_fill_manual(values = c("blue", "red")) +
+  labs(title = "Side-by-Side Histograms",
+       x = "Value", y = "Frequency")
+
+# Display the side-by-side histograms
+print(p)
+```
+
+```{r}
+data <- read.csv("AdmissionPredict.csv")
+head(data)
+library(tidyverse)
+library(GGally)
+
+ggpairs(data)
+new_df <- data.frame(cbind(data$SOP, data$LOR, data$University.Rating, data$Chance.of.Admit))
+ggpairs(new_df)
+
+cor(new_df$X4, new_df$X3)
+plot(new_df$X3, new_df$X4)
+model1 <- lm(X4~X3, data = new_df)
+tester <- data.frame(X3 = c(1,2,3))
+predict(model1, newdata = tester, interval = "predict", 0.88)
+```
+
+```{r}
+age = c(2,3,4,5,8,12,14,17,21,28,39,50,67,83)
+run.time = c(60,55,40,37,32,26,18,16,17,17,23,29,42,59)
+age_sq = age^2
+quad_mod = lm(run.time ~age + age_sq)
+datan <- data.frame(age = 45, age_sq = 45^2)
+predict(quad_mod, newdata = datan, interval = "predict")
+summary(quad_mod)
+```
+
+```{r}
+library(tidyverse)
+set.seed(42)
+age = sample(18:65, 50, replace = TRUE)
+height = runif(50, 150, 190)
+weight = runif(50,45, 100)
+gender = sample(c("Male", "Female"), 50, replace = TRUE)
+data = data.frame(Age = age, Height = height, Weight = weight, Gender = gender)
+
+data |> select(Age, Height)
+
+data |> filter(Age > 30)
+
+data |> arrange(desc(Height))
+
+data |> select(Age) |>
+  summary()
+
+quantile(data$Weight, c(0,0.25,0.5,0.75,1))
+
+boxplot(data$Height, col = "blue", xlab = "HELL", ylab = "ete", main = "TE") 
+
+ggplot(data, aes(x = Height, y = Weight)) + geom_boxplot(col = "blue", fill = "red") + labs(title = "hell", x = "he", y = "ha")
+
+boxplot(data$Height ~ data$Gender, col = "red", xlab = "efef", ylab = "Spunchbob")
+data$Gender <- factor(data$Gender)
+ggplot(data, aes(x = gender, y = height)) + geom_boxplot(col = c("red", "blue")) + labs(scale_fill_manual(values = c("orange", "red")))
+
+
+```
+
+```{r}
+data <- iris
+
+data <- data |> rename(iris.Species = Species)
+
+data <- data |> arrange((Sepal.Length))
+
+data <- data |> mutate(Ratio = Sepal.Width/Petal.Width) |> relocate(Ratio, .before = 1)
+
+data2 <- data |> group_by(iris.Species) |> summarize(mean = mean(Petal.Width))
+
+data <- data |> filter(Sepal.Length > Sepal.Length/2) |> mutate(Greater.half = Sepal.Length)
+
+
+```
+
+```{r}
+head(lynx)
+class(lynx)
+length(lynx)
+names(lynx) <- (2025-113):2025
+lynx["1999"]
+
+```

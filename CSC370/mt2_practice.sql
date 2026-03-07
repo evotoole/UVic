@@ -1,0 +1,16 @@
+CREATE TABLE Chicken(
+    Chicken_id INT PRIMARY KEY NOT NULL
+    Egg_id INT NOT NULL
+);
+CREATE TABLE Egg(
+    Egg_id INT PRIMARY KEY NOT NULL
+    Chicken_id REFERENCES Chicken(Chicken_id) DEFFERABLE initially deffered NOT NULL
+);
+
+ALTER TABLE Chicken CONSTRAINT DEF
+FOREIGN KEY Egg_id REFERENCES Egg(Egg_id) defferable initially deffered;
+
+BEGIN TRANSACTION
+INSERT INTO Chicken VALUES(1,2)
+INSERT INTO Egg VALUES(2,1)
+COMMIT;

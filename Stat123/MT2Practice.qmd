@@ -4,7 +4,7 @@ format: docx
 editor: visual
 ---
 
-## questions
+## questions (LECTURE 6)
 
 1\) find the median of the following vectors c(83, 83, 63, 2000, 74, 83, 79, 61, 82, 85, 62), c(83, 12, 3, 1, 99, 101). hint, do not use a built in function like median(). then do it with median()
 
@@ -47,70 +47,179 @@ geom2
 
 you should use the geometric mean for things like SKEWED DISTRIBUTIONS, population increase, ratios. Use harmonic for things like speed and distance sometimes time periods too.
 
-5\) use geometric mean on the stock.csv data set (hint remove na and use -1) on stock\$ratio
+5\) use geometric mean on the stock.csv data set (hint remove na and use -1) on stock\$ratio, to find the effective rate of return over the time you hold the stock
 
 ```{r}
-
+stocks <- read.csv('Stock.csv')
+head(stocks)
+geom <- exp(mean(log(stocks$Ratio), na.rm = TRUE)) -1
+geom2 <- (prod(stocks$Ratio))^(1/(length(stocks$Ratio)))
+geom2
 ```
 
 6\) find the mean of 3 columns of the stocks.csv data set (hint remove na)
 
 ```{r}
-
+stock <- read.csv("Stock.csv")
+mean(stock$Price, na.rm =TRUE)
+mean(stock$Ratio, na.rm = TRUE)
 ```
 
-7\) read the speed.csv data set and then apply the harmonic mean on the time and distance
+7\) read the speed.csv data set and then apply the harmonic mean on the time and distance (how do you calculate this simply put)?
 
 ```{r}
-
+speed <- read.csv("speed.csv")
+head(speed)
+harmony <- sum(speed$distance)/(sum(speed$time))
+harmony
 ```
 
 8\) find the min and max (range) of: c(83, 83, 63, 2000, 74, 83, 79, 61, 82, 85, 62) using min() and max(), and another function
 
 ```{r}
-
+vect <- c(83, 83, 63, 2000, 74, 83, 79, 61, 82, 85, 62)
+mini <- min(vect)
+maxi <- max(vect)
+mini
+maxi
+(range(vect))
 ```
 
 9\) use cumsum on the following to find the different percentiles for each item: c(81, 93, 63, 2000, 74, 83, 79, 61, 82, 85, 62)
 
 ```{r}
-
+vec <- c(81, 93, 63, 2000, 74, 83, 79, 61, 82, 85, 62)
+vec <- sort(vec, decreasing = FALSE)
+(cumsum(vec)/sum(vec))
+names(vec) <- (cumsum(vec)/sum(vec))
+vec
 ```
 
-10\) load the table of the previous vector into a data frame, and add columns representing cumulative frequence and relative frequency. understand what they mean
+10\) load the table of the previous vector into a data frame, and add columns representing cumulative frequence and relative cumulative frequency. understand what they mean
 
 ```{r}
-
+vec <- c(81, 93, 63, 2000, 74, 83, 79, 61, 82, 85, 62)
+tab <- table(vec)
+cum_freq <- cumsum(tab)
+cum_freq
+rel_cumfreq <- cum_freq/length(tab)
+rel_cumfreq
 ```
 
 11\) use min, max, median, IQR, quantile, summary on the bulit in airquality dataset. (try putting numbers and vectors with the quantile function
 
 ```{r}
-
+head(airquality)
+min(airquality$Ozone, na.rm = TRUE)
+max(airquality$Ozone, na.rm = TRUE)
+median(airquality$Ozone, na.rm = TRUE)
+IQR(airquality$Ozone, na.rm = TRUE)
+quantile(airquality$Ozone, na.rm = TRUE, c(0.8,.595))
+quantile(airquality$Temp, c(.3,.1))
 ```
 
 12\) use vanilla R to create a box blot (box and whisker plot) for temp and month in the air quality data set
 
 ```{r}
-
+boxplot(airquality$Temp)
+boxplot(airquality$Temp~airquality$Month)
 ```
 
 13\) do the same but with ggplot
 
 ```{r}
-
+library(ggplot2)
+ggplot(airquality, aes(x = as.factor(Month),y=Temp)) + geom_boxplot() +ggtitle("HELO") + labs(x = "fef", y = "xys")
 ```
 
 14\) find the mean deviation, absolute mean deviation, and the mean square deviation
 
 ```{r}
-
+(mean(airquality$Temp - mean(airquality$Temp)))
+(mean(abs(airquality$Temp - mean(airquality$Temp))))
+(mean(((airquality$Temp - mean(airquality$Temp))^2)))
 ```
 
 15\) find the standard deviation and variance of temp in 2 different ways.
 
 ```{r}
-
+var(airquality$Temp)
+sd(airquality$Temp)
 ```
 
 16\) use LETTERS to make a data frame of letters and reps.
+
+```{r}
+new_df <- as.data.frame(cbind(LETTERS[1:6], rep(5,6)))
+new_df
+```
+
+17\) use get_mode to find the mode of some data frame
+
+```{r}
+library(tidyverse)
+x = c(3,4,3,2,3,3,3,2,1,23,4,NA)
+(get_mode(x)[1])
+```
+
+**QUESTIONS (LECTURE 7)**
+
+1\) Use sum and square root at the same time with pipes on the vector c(1,2,2,3,1,5)
+
+```{r}
+
+```
+
+2\) load in library(nycflights13), and then use the filter command with pipes to filter columns using == and vectors hint use %in%, and logical operators
+
+```{r}
+
+```
+
+3\) use the arrange function to make our rows be sorted in descending order based on one of the columns in nycflights13 (ie sort rows in ascending order based on two of the columns (1 will have priority)). then sort based on one in descending order.
+
+```{r}
+
+```
+
+4\) use distinct() on its own, then use it with and without .keep_all
+
+```{r}
+
+```
+
+5\) use mutate to create a new column edit a new column and use .keep = "used"
+
+```{r}
+
+```
+
+6\) use select to select multiple columns (comma seperated) and then use slicing to do it, then use ! to avoid some, then use it to change the name of a column, then use rename to rename (note the difference of output and how theyre similar). use select to select only string columns hint: use where.
+
+```{r}
+
+```
+
+7\) use relocate to swap columns, then use it to position (using slices) multiple columns after another column, then use starts_with("") to swap before another column
+
+```{r}
+
+```
+
+8\) use filter, mutate, select, arrange in the same pipes
+
+```{r}
+
+```
+
+9\) use summarize, group_by, .groups (in summarize), n(), mean(), .by
+
+```{r}
+
+```
+
+10\) filter by country name = "canada" and some other.
+
+```{r}
+
+```

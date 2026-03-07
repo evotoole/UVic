@@ -1,0 +1,106 @@
+---
+title: "Lab 9"
+author: "Your name"
+date: "`r Sys.Date()`"
+format: docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+```
+
+## 1. Read in data file and set up data frame for analysis.
+
+```{r}
+# 
+realestate <- read.csv("realestate.csv", header = TRUE)
+
+#head(realestate)
+
+```
+
+
+```{r}
+
+#1a.
+house <- realestate |>
+    select(X2.house.age, X3.distance.to.the.nearest.MRT.station, X4.number.of.convenience.stores, Y.house.price.of.unit.area) 
+
+
+e
+
+#1b.
+
+house <- house |> rename(age = X2.house.age,
+           mrt.dist = X3.distance.to.the.nearest.MRT.station,
+           num.conv.stores = X4.number.of.convenience.stores,
+           price = Y.house.price.of.unit.area)
+
+
+```
+
+```{r}
+
+#1c price vs age
+ggplot(house, aes(x = age, y = price)) +
+    geom_point() +
+    geom_smooth(method = "lm", color = "blue", se = FALSE) +
+    labs(title = "House Age vs Price", x = "House Age", y = "Price")
+
+```
+
+
+
+```{r}
+
+#1c price vs distance to mrt station
+ggplot(house, aes(x = mrt.dist, y = price)) +
+    geom_point() +
+    geom_smooth(method = "lm", color = "blue", se = FALSE) +
+    labs(title = "Distance to MRT vs Price", x = "Distance to MRT", y = "Price")
+
+```
+
+
+```{r}
+
+#1c price vs no. of convenience stores nearby
+ggplot(house, aes(x = num.conv.stores, y = price)) +
+    geom_point() +
+    geom_smooth(method = "lm", color = "blue", se = FALSE) +
+    labs(title = "Number of Convenience Stores vs Price", x = "Convenience Stores", y = "Price")
+
+```
+
+```{r}
+
+#1d
+#for the first there does not seems to be much of a linear relationship, the plot is quite spread out and not linear
+#for the second it also does not appear very linear
+#the third is a bit more linear looking but still quite spread out.
+
+
+
+```
+
+## 2. Individual correlations.
+
+```{r}
+cor(house$age, house$price)
+cor(house$mrt.dist, house$price)
+cor(house$num.conv.stores, house$price)
+
+```
+
+## 3. Correlation matrix for all variables.
+
+```{r}
+
+cor_matrix <- cor(house)
+print(cor_matrix)
+
+cor(house$num.conv.stores, house$mrt.dist)
+```
+

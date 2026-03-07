@@ -1,0 +1,26 @@
+---
+title: "STAT123FINALPART1"
+format: docx
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+```
+
+```{r}
+#Question 1
+#a)
+employees <- c("Alice", "Bob", "Charlie", "David", "Eva")
+#b)
+salaries <- c(50000, 55000, 60000, 65000, 70000)
+names(salaries) <- employees
+salaries
+#c)
+salaries[3]
+salaries["Charlie"]
+```
+
+```{}
+```

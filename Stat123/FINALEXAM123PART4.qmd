@@ -1,0 +1,28 @@
+---
+title: "FINALEXAM123PART3"
+format: docx
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+```
+
+```{r}
+#a)
+head(diamonds, 6)
+quantile(diamonds$carat, c(0,0.25,0.5,0.75,1))
+#b)
+boxplot(diamonds$table~diamonds$cut, xlab = "Diamond Cut", ylab = "amount of diamonds in this range", main = "Measuring Amounts of Each diamond cut")
+#c)
+ggplot(diamonds, aes(x = cut, y = table)) + geom_boxplot() + labs(x = "Diamond Cut", y = "amount of diamonds in this range", title = "Measuring Amounts of Each diamond cut")
+#d)
+quantile(diamonds$price, c(0.05, 0.95))
+#e)
+ggplot(diamonds, aes(x = price)) + geom_histogram(aes(y = after_stat(density))) + geom_density(col = "red")
+#f)
+qqnorm(diamonds$price)
+qqline(diamonds$price)
+#it does not appear normal. It does not fit the straight line
+```

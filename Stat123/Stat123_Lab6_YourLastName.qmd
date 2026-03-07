@@ -1,0 +1,96 @@
+---
+title: "Lab 6 Normal Distribution"
+author: "Dr. J. Yu"
+date: "`r Sys.Date()`"
+format: docx
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+This is due by 8:00 pm one day after your lab. You can find the submission dropbox in
+
+Crowdmark.
+
+Download the files "Stat123 Lab6 YourLastName.qmd" and "data wk8.csv"from Brightspace and save them in your working directory.
+
+Open the Quarto file and write your code in it. If tidyverse is not installed on your computer, do
+
+so now. Load the package. This will load both dplyr and ggplot2 packages.
+
+Import "data wk8.csv" as a data frame named d6. There are two variables, X and T.
+
+For Questions 1 and 2, use the variable X.
+
+```{r}
+
+library(tidyverse)
+
+d8 <- read.csv(file = "data_wk8.csv", header=T)
+
+#(a) Use the quantile(), or other function to determine and display the minimum and maximum values of the variable. You do not need to save these but you must show that you printed them out.
+
+
+
+
+
+
+```
+
+```{r}
+
+#Create a ggplot2 histogram of the X variable. Set the y-axis using density scale. Give the histogram border and fill colours of your liking. Name the $X$-axis ``X Values'', and make the title "Histogram and Density Curve of X". 
+
+# Set the minimum and maximum values on the x-axis so that all data points are represented. For example, if the minimum and maximum values of the variables are 40.4 and 55.6 respectively, you should set the histogram values to be 40 and 56 respectively. Set the binwidth to 1.
+
+```
+
+## Question 2
+
+This question involves gauging whether or not a distribution seems normally distributed.
+
+```{r}
+
+#(a) Does the histogram created in Question 1 seem normally distributed?
+# The density curve is not very bell-shaped. Further investigation is required.
+
+
+
+#(b) Find the 2.5% and 97.5% quantiles of X and save them as qlow and qhigh, respectively.
+
+qlow <- 
+qhigh <- 
+
+print(paste("Empirical 2.5th and 97.5th Quantiles: (", qlow, ",", qhigh, ")"))
+
+#(c) Finding the 2.5% and 97.5% quantiles of normally distributed data.
+
+
+
+
+#(d) 
+
+
+
+#(e) More sophisticated tests
+
+
+
+# Note: There is a data size limit of 5000 for the Shapiro-Wilk test.
+
+
+```
+
+Question 3
+
+```{r}
+
+#ggplot Histogram of T 
+# Reuse the code in question 1 and change the variables.
+
+
+```

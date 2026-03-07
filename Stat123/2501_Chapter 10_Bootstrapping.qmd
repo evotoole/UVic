@@ -1,0 +1,140 @@
+---
+title: "Bootstrapping in R"
+output: html_document
+#output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+getwd()
+
+```
+
+```{r bootstrap}
+
+data_to_bootstrap <- read.csv("bootstrap_sample.csv")
+head(data_to_bootstrap)
+#dim(data_to_bootstrap)
+
+# Save the variable column in the data set to a vector named original_sample
+original_sample = data_to_bootstrap$Variable
+
+# Create an empty vector to store all of the sample standard deviations:
+boot_sample = numeric()
+
+# or boot_sample <- NULL
+
+# Determine the length of the sample and call this value n
+n <- length(original_sample)
+n
+
+# Write a for-loop which computes the standard deviation on 10000 samples 
+# of size n taken/bootstrapped from the original sample.
+
+
+for(i in 1:10000){
+  boot_sample[i]= sd(sample(original_sample, n, replace = TRUE))
+}
+
+
+# To estimate the sample standard deviation, you take an average of all of 
+# the sample standard deviations
+
+mean(boot_sample)
+
+
+# Find a 90% confidence interval for the standard deviation
+
+# Use the formula low <- (1 - confidence)/2 and high <- 1 - low
+
+confidence <- .90
+low <- (1 - confidence)/2
+high <- 1 - low
+c(low, high)
+
+quantile(boot_sample,c(low,high))
+
+# Define the lower bound of the confidence interval 
+lower = quantile(boot_sample,low)
+upper = quantile(boot_sample,high)
+
+# Plot a histogram of the sampling distribution and insert vertical lines
+# at the confidence interval bounds. 
+hist(boot_sample,main="Bootstrapped Sample Dist. for Std. Dev",
+     probability = TRUE)
+abline(v=lower,col="red")
+abline(v=upper,col="red")
+
+# For practice, you should try to reproduce the histogram with ggplot2.
+
+```
+
+```{r }
+```
+
+Another Example: Bootstrapped Confidence Interval for population mean $\mu$
+
+Consider again the bootstrap_sample.csv data that we have read into R.
+
+1. Compute the sample mean.
+
+```{r}
+mean(original_sample)
+```
+
+2. Create an empty vector called boot_mean which will contain 10000 bootstrapped sample means.
+
+```{r}
+# Empty vector which will contain all of the bootstrapped sample means
+boot_mean = numeric()
+```
+
+3. Write a bootstrap which computes 10000 sample means and stores the observed values of the statistic in the vector boot_mean.
+
+```{r}
+for(k in 1:10000){
+  temp_samp = sample(original_sample,n,replace=TRUE)
+  temp_mean = mean(temp_samp)
+  boot_mean[k] = temp_mean
+}
+```
+
+4. Use the bootstrapped sampling distributed to compute a 95% bootstrapped confidence interval
+for $\mu$.
+
+```{r}
+quantile(boot_mean,c(0.025,0.975))
+```
+
+5. Compare the mean of the single sample in bootstrap_sample.csv and the mean of the 10000 bootstrapped sample. What do you observe?
+
+```{r}
+mean(boot_mean)
+
+mean(original_sample)
+```
+
+6. Compare the variance of the single sample in bootstrap_sample.csv and the variance of the 10000 bootstrapped sample. What do you observe?
+
+```{r}
+var(boot_mean)
+
+var(original_sample)
+
+sig.os <- var(original_sample)*(n-1)/n
+
+sig.os/var(boot_mean)
+```
+
+7. Plot the histogram of the 10000 bootstrapped sample means. What do you observe?
+
+```{r}
+ggplot(data = NULL, aes(x = boot_mean)) + geom_histogram(binwidth = 2)
+```
+
+```{r}
+
+```
+

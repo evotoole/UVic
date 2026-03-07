@@ -1,0 +1,25 @@
+---
+title: "FINALEXAM123PART5"
+format: docx
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+```
+
+```{r}
+#a) # of rows:
+diamonds |> count()
+#b) 
+diamonds |> group_by(cut) |> summarize(avg_table = mean(table))
+#c)
+diamonds |> filter(clarity == "IF")
+#d)
+diamonds |> arrange(desc(price))
+#e)
+diamonds |> mutate(Carat.Price.Ratio = price/carat, .after = depth)
+#f)
+diamonds |> tail(3)
+```

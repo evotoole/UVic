@@ -1,0 +1,285 @@
+---
+title: 'Chapter 13: Simple Regression'
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+```
+
+## 
+
+```{r}
+
+# set current directory, then read data file
+
+realEstate = read.csv("RealEstate.csv")
+colnames(realEstate) # very long variable names
+head(realEstate)
+
+realEstate <- realEstate |> dplyr::select(-No) #remove first column
+head(realEstate)
+
+y = realEstate$Y.house.price.of.unit.area
+x1 = realEstate$X1.transaction.date
+x2 = realEstate$X2.house.age
+x3 = realEstate$X3.distance.to.the.nearest.MRT.station
+x4 = realEstate$X4.number.of.convenience.stores
+x5 = realEstate$X5.latitude
+x6 = realEstate$X6.longitude
+
+#or
+
+namevec <- c("x1", "x2", "x3", "x4", "x5", "x6", "y")
+names(realEstate) <- namevec
+realEstate
+
+
+
+```
+
+## Exploring dataset
+
+```{r}
+
+#install.packages("GGally")    # only run once
+library(GGally)
+
+ggpairs(realEstate)
+
+ggpairs(realEstate |> select('x3', 'y'))
+
+#or ggpairs(realEstate[, c(3, 7)])
+
+
+
+```
+
+Plot y and x3 and try to observe the form of the relationship 
+
+```{r}
+
+plot(x3,y)
+#plot(y,x3)
+
+```
+
+Plot log(y) and x3 to see if the relationship becomes more linear:
+
+```{r}
+
+plot(x3,log(y))
+
+```
+To see that the form between x3 and y is less linear than the form between x3 and log(y), use the correlation coefficient r:
+
+```{r}
+
+cor(x3,y)
+
+cor(x3,log(y)) # close to -1 than cor(x3, y)
+
+```
+
+Find the linear regression line for log(y) and x3:
+
+```{r}
+
+x3lm = lm(y ~ x3)
+
+#x3lm
+lm(y ~ x3)
+
+## Assess the validity of the model, use the summary function:
+
+#options(scipen=999)  # not show scientific notation
+
+summary(x3lm)
+
+```
+Residual Analysis
+
+```{r}
+
+#get list of residuals 
+res <- resid(x3lm)
+#res
+qqnorm(res)
+qqline(res)
+
+shapiro.test(res)
+
+ggplot(data = NULL, aes(x = res)) + geom_density()
+
+
+#produce residual vs. fitted plot
+plot(fitted(x3lm), res)
+
+#add a horizontal line at 0 
+abline(0,0)
+
+
+#install.packages("MASS")
+library(MASS) #if it's not installed, do so.
+
+#calculate studentized residuals, which is a scaled version of the residuals
+stud_res <- studres(x3lm)
+#stud_res
+#res
+
+#produce residual vs. fitted plot
+plot(fitted(x3lm), stud_res,  ylab='Studentized Residuals', xlab='predicted values')
+
+#add a horizontal line at 0 
+abline(h = c(-3,0,3), lty = 2)
+
+
+```
+
+
+## Plot y and x5
+
+```{r}
+
+plot(x5,y)
+cor(y,x5)
+
+```
+
+## Plot log(y) and x5
+
+```{r}
+
+plot(x5,log(y))
+cor(log(y), x5)
+
+```
+
+## Compare the linear correlation between x5 and y and log(y)
+
+```{r}
+
+cor(x5,y)
+
+cor(x5,log(y))
+
+```
+
+## Create a regression model for log(y) and x5
+
+```{r}
+
+x5model <- lm(y~x5)
+
+x5model
+## Check to see if the model is adequate. 
+
+summary(x5model)
+
+
+```
+
+## How to use r-squared
+
+```{r}
+
+## change in y
+
+45 - 35
+
+## How much of this change can be explained by the model: Multiple R-squared is 
+## 0.2985
+
+10*.2985
+
+#Response prediction
+#define new observation
+newdata = data.frame(x5=24.95)
+
+#use model to predict a response value with the prediction interval
+predict(x5model, newdata, interval = "predict", level = 0.95)
+#predict(x5model, newdata, interval = "predict")
+
+predict(x5model, newdata, interval = "predict", level = 0.90)
+
+
+# For multiple values of x5's
+
+newdata = data.frame(x5=c(24.95, 25.5, 30))
+
+#use model to predict a response value with the prediction interval
+predict(x5model, newdata, interval = "predict")
+
+#This is which the band on the ggplot came from.
+
+
+```
+
+## A different "prediction" interval
+
+```{r}
+
+#use model to predict the mean response value with the confidence interval
+predict(x5model, newdata, interval = "confidence")
+
+```
+
+## Another example
+
+```{r}
+
+ages = c(2, 2.5, 4, 5, 9, 11, 13, 15, 16, 18)
+heights = c(2.3, 3, 3.5, 3.5, 4, 4.6, 5.1, 5.2, 5.6, 5.5)
+
+plot(ages, heights)
+cor(ages, heights)
+cor(heights, ages)
+
+lm(heights~ages)
+
+plot(ages, heights, xlim = c(0, 20))
+abline(lm(heights~ages))
+
+## or
+modelA <- lm(heights~ages)
+modelA
+
+```
+
+
+## Linear regression, but the equation has a quadratic term
+
+```{r}
+
+xvals <- c(2, 4, 6, 8, 10, 12, 14)
+yvals<- c(5,10,15,22,17,12,3)
+
+plot(xvals,yvals)
+
+#Simple Regression
+
+model1 <- lm(yvals ~ xvals)
+
+summary(model1)
+
+xsq <- xvals^2
+
+
+#Multiple Regression
+
+model2 <- lm(yvals ~ xvals + xsq)
+#model2
+
+summary(model2)
+
+
+```
+
+
+```{r}
+
+```
+

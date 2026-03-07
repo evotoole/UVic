@@ -15,7 +15,7 @@ class PacketHeader:
         self.orig_len = orig_len
 
 class ApplicationHeader:
-    def __init__(self, protocol, code, src_port = None, dest_port = None, length = None, type_of_message = None, sequence_number = None):
+    def __init__(self, protocol, code, src_port = None, dest_port = None, length = None, type_of_message = None, sequence_number = None, identification = None):
         self.type_of_message = type_of_message
         self.protocol = protocol
         self.code = code
@@ -23,6 +23,7 @@ class ApplicationHeader:
         self.dest_port = dest_port
         self.length = length
         self.sequence_number = sequence_number
+        self.identification = identification
         
 
 class IPHeader:

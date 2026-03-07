@@ -1,0 +1,36 @@
+---
+title: "FINALEXAM123PART7"
+format: docx
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+```
+
+```{r}
+hours.studied = 1:14
+exam.score = c(45,50,55,60,65,70,75,80,85,90,92,93,94,95)
+#a)
+cor(hours.studied, exam.score)
+#there is a very strong positive linear correlation between these data
+#b)
+data <- data.frame(exam.score = exam.score, hours.studied = hours.studied)
+ggplot(data, aes(y = exam.score, x = hours.studied)) + geom_point() + geom_smooth(method = "lm")
+#c)
+model <- lm(exam.score~hours.studied)
+#c)
+summary(model)
+#the amount that can be explained is 96.61% (r^2)
+#e)
+dat <- data.frame(hours.studied = 7)
+predict(model, newdata = dat, interval = "predict")
+#f)
+sd_vec <- numeric(10000)
+for(i in 1:10000){
+  samp <- sample(exam.score, size = length(exam.score), replace = TRUE)
+  sd_vec[i] <- sd(samp)
+}
+mean(sd_vec)
+```

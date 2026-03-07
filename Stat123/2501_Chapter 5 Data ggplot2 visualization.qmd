@@ -36,13 +36,13 @@ head(students)
 ```{r}
 
 #Create a factor with orders
-
+students$Grade
 students$Grade <-factor(students$Grade, 
     levels = c("A+", "A", "A-", "B+", "B", "B-", "C", "D", "F"))
 
 #With ggplot2, we do not need to create a frequency table first.
 #Let's get the table anyway.
-
+students$Grade
 gradetable <- table(students$Grade)
 
 #basic bar chart
@@ -244,6 +244,8 @@ barplot(tab2, col = rainbow(length(tab2[,1])))
 
 ggplot(dcba, aes(x = Gender, fill = Dept)) + geom_bar() +
   ggtitle("Department Distribution by Gender") + labs(x = "Gender")
+
+ggplot(dcba) + geom_bar(aes(x = Dept, fill = Gender))
 
 ggplot(dcba, aes(x = Dept, fill = Gender)) + geom_bar() +
   ggtitle("Gender Distribution by Department") + labs(x = "Dept")

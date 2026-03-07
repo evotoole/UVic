@@ -1,0 +1,87 @@
+---
+title: "CHATFINALPRACTICE"
+format: docx
+editor: visual
+---
+
+```{r}
+library(palmerpenguins)
+penguin_data <- penguins
+head(penguin_data)
+plot(penguin_data$flipper_length_mm, penguin_data$body_mass_g)
+ggplot(penguin_data, mapping = aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + geom_point() + geom_smooth(method = 'lm', se = FALSE)
+
+ggplot(penguin_data, aes( x = species, col = sex)) + geom_bar(fill = "red") + facet_wrap(~island)
+```
+
+```{r}
+real_data <- read.csv("RealEstate.csv")
+colnames(real_data)
+head(real_data)
+real_data <- real_data |> filter(X2.house.age < 20 & Y.house.price.of.unit.area < 40) |> mutate(price_per_sqft = Y.house.price.of.unit.area, .before = 1)
+real_data
+colnames(penguin_data)
+real_data <- penguins |> group_by(island) |> summarize(mean = mean(flipper_length_mm, na.rm = TRUE))
+
+```
+
+```{r}
+new_peng_data <- penguins |> filter(species == "Chinstrap")
+vec1 <- numeric(10000)
+vec2 <- numeric(10000)
+#length(new_peng_data$body_mass_g)
+for (i in 1:10000){
+  temp <- sample(new_peng_data$body_mass_g, 68, replace = TRUE)
+  vec1[i] <- quantile(temp, 0.025, na.rm = TRUE)
+  vec2[i] <- quantile(temp, 0.975, na.rm= TRUE)
+}
+mean(vec2, na.rm = TRUE)
+mean(vec1, na.rm = TRUE)
+quantile(new_peng_data$body_mass_g, c(0.025, 0.975))
+
+hist(new_peng_data$body_mass_g)
+
+abline(v=mean(vec1), col = "blue")
+abline(v=mean(vec2), col = "blue")
+
+```
+
+```{r}
+s <- pnorm(37.1, sd = 0.3, mean = 36.6)
+1-s
+norm <- rnorm(10000, mean = 36.6, sd = 0.3)
+
+beaks <- penguins$bill_length_mm
+shapiro.test(beaks)
+qqnorm(beaks)
+qqline(beaks)
+```
+
+```{r}
+library(GGally)
+mass <- penguin_data$body_mass_g
+length <- penguin_data$flipper_length_mm
+mod = lm(mass~length)
+res <- resid(mod)
+qqnorm(res)
+qqline(res)
+shapiro.test(res)
+summary(mod)
+mean(length, na.rm = TRUE)
+data <- data.frame(length = 200)
+predict(mod, data, interval = "predict")
+```
+
+```{r}
+colnames(penguins)
+ggplot(penguins) + geom_bar(aes(sex, fill = species))
+#penguins$species <- factor(penguins$species)
+ggplot(penguins, aes(bill_length_mm, fill = species), position = "dodge") + geom_histogram() + facet_wrap(~species)
+```
+
+```{r}
+source("chat_GPT.R")
+
+response <- chat_gpt("hi", model = "gpt-4o-mini")
+cat(response)
+```

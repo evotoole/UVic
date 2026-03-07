@@ -1,0 +1,24 @@
+---
+title: "FINALEXAM123PART3"
+format: docx
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+```
+
+```{r}
+#a)
+sales <- data.frame(Revenue = c(150,200,250,300,350,400), Month = c("January", "February", "March", "April", "May", "June"))
+mean(sales$Revenue)
+
+#b)
+barplot(sales$Revenue ~ sales$Month, xlab = "Months", ylab = "Monthly Revenue", main = "Company Sales - Monthly Revenue", col = "darkorange")
+#c)
+ggplot(sales, aes(x = Month, y = Revenue)) + geom_col(fill = "darkorange", col = "black") + labs(x = "Month", y = "Monthly Revenue", title = "Company Sales - Monthly Revenue")
+
+#d)
+pie(sales$Revenue, col = c("orange", "blue", "red", "green", "purple", "black"), main = "Revenue by months 1-6")
+```

@@ -1,0 +1,41 @@
+---
+title: "FINALEXAM123PART2"
+format: docx
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+```
+
+```{r}
+#Question 2
+#a)
+matrix <- matrix(sample(1:200, 6*12), nrow = 12, ncol = 6)
+matrix
+#b
+colSums(matrix)
+max <- 0
+row <- 0
+col <- 0
+for (i in 1:6)
+  for (j in 1:12)
+    if (matrix[j,i] > max){
+      max <- matrix[j,i]
+      row <- j
+      col <- i
+    }
+#c)
+#highest value found:
+matrix[row,col]
+#this value is located at row, column
+print("this is located at row")
+print(row)
+print("and column")
+print(col)
+
+#d)
+newmatrix <- rbind(LETTERS[1:6], matrix[1,],matrix[2,],matrix[3,],matrix[4,],matrix[5,],matrix[6,],matrix[7,],matrix[8,],matrix[9,],matrix[10,],matrix[11,],matrix[12,])
+newmatrix
+```

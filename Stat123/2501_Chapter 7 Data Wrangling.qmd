@@ -1,0 +1,305 @@
+---
+title: "Data Wrangling"
+#eval: false
+format: docx
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+First install nycflights13 packages:
+
+Type the following in R console: *install.packages("nycflights13")* or use RStudio install package method.
+
+```{r load packages}
+
+library(tidyverse) #observe which packages are loaded any potential conflicts
+library(nycflights13)
+
+```
+
+```{r}
+
+x <- 9
+
+x  |>  sqrt()
+
+x <- c(9, 25)
+
+x |>  sqrt() |> sum()
+
+y = x |> sqrt()
+
+y |> sum()
+
+
+```
+
+```{r}
+
+colnames(flights)
+dim(flights)
+
+#glimpse(flights)
+
+head(flights)
+
+flights |> 
+  filter(dep_delay > 120)
+
+flights |> 
+  filter(month == 1 & day == 1)
+
+flights |> 
+  filter(month == 1 | month == 2)
+
+flights |> 
+  filter(month %in% c(1, 2))
+
+jan1 <- flights |> 
+  filter(month == 1 & day == 1)
+
+
+
+```
+
+```{r}
+
+flights |> 
+  arrange(year, month, day, dep_time)
+
+flights |> 
+  arrange(desc(dep_delay))
+
+
+```
+
+```{r}
+
+flights |> 
+  distinct()
+
+flights |> 
+  distinct(origin, dest)
+
+flights |> 
+  distinct(origin, dest, .keep_all = TRUE)
+
+
+```
+
+```{r}
+
+flights |> 
+  mutate(
+    gain = dep_delay - arr_delay,
+    speed = distance / air_time * 60
+  )
+
+flights |> 
+  mutate(
+    gain = dep_delay - arr_delay,
+    speed = distance / air_time * 60,
+    .before = 1
+  )
+
+flights |> 
+  mutate(
+    gain = dep_delay - arr_delay,
+    speed = distance / air_time * 60,
+    .after = day
+  )
+
+flights |> 
+  mutate(
+    gain = dep_delay - arr_delay,
+    hours = air_time / 60,
+    gain_per_hour = gain / hours,
+    .keep = "used"
+  )
+
+```
+
+```{r}
+
+flights |> 
+  select(year, month, day)
+
+flights |> 
+  select(year:day)
+
+flights |> 
+  select(!year:day)
+
+flights |> 
+  select(where(is.character))
+
+flights |> 
+  select(tail_num = tailnum)
+
+```
+
+```{r}
+
+flights |> 
+  rename(tail_num = tailnum)
+
+
+```
+
+```{r}
+head(flights)
+
+flights |> 
+  relocate(time_hour, air_time)
+
+flights |> 
+  relocate(year:dep_time, .after = time_hour)
+
+
+flights |> 
+  relocate(starts_with("arr"), .before = dep_time)
+
+```
+
+```{r}
+
+flights |> 
+  filter(dest == "IAH") |> 
+  mutate(speed = distance / air_time * 60) |> 
+  select(year:day, dep_time, carrier, flight, speed) |> 
+  arrange(desc(speed))
+
+```
+
+```{r}
+
+flights |> 
+  group_by(month)
+
+flights |> 
+  group_by(month) |> 
+  summarize(
+    avg_delay = mean(dep_delay)
+  )
+
+flights |> 
+  group_by(month) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE)
+  )
+
+flights |> 
+  group_by(month) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE), 
+    n = n()
+  )
+
+ flights |> group_by( month, day) |> 
+   summarize(n = n())
+
+  flights |> group_by(year, month, day) |> 
+    summarize(n = n(),
+      .groups = "drop_last"
+    )
+
+ flights |> group_by(year, month, day) |> 
+   ungroup()
+
+flights |> group_by(year, month, day) |> 
+  ungroup() |>
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE), 
+    flights = n()
+  )
+
+#New parameter " .by = " for newer versions of the package.
+
+flights |> 
+  summarize(
+    delay = mean(dep_delay, na.rm = TRUE), 
+    n = n(),
+    .by = month
+  )
+
+flights |> 
+  summarize(
+    delay = mean(dep_delay, na.rm = TRUE), 
+    n = n(),
+    .by = c(origin, dest)
+  )
+
+
+```
+
+```{r}
+
+# install.packages("gapminder")
+{r}
+
+gapminder |> filter(year == 1977) |> summarize(mean_pop = mean(pop))
+
+#try
+
+gapminder |> filter(year == 1977) |> summarize(mean(pop))
+
+
+
+gapminder |> filter(country == "Canada") |> summarize(med_life_exp = median(lifeExp))
+
+
+gapminder |> filter(continent == "Europe", year == 2002) |> arrange(desc(pop))
+
+gapminder |> filter(continent == "Europe" | year == 2002) |> arrange(desc(pop))
+
+library(gapminder)
+
+colnames(gapminder)
+
+glimpse(gapminder)
+
+gapminder |> 
+    summarize(mean_pop = mean(pop))
+
+#mean_pop
+
+
+med_lifeExp <- gapminder |> summarize(med_lifeExp = median(lifeExp))
+med_lifeExp
+```
+
+```{r}
+
+gapminder |> filter(year == 1977) |> summarize(mean_pop = mean(pop))
+
+#try
+
+gapminder |> filter(year == 1977) |> summarize(mean(pop))
+
+
+
+gapminder |> filter(country == "Canada") |> summarize(med_life_exp = median(lifeExp))
+
+
+gapminder |> filter(continent == "Europe", year == 2002) |> arrange(desc(pop))
+
+gapminder |> filter(continent == "Europe" | year == 2002) |> arrange(desc(pop))
+
+```
+
+```{r}
+
+gapminder |> group_by(country) |> summarize(mean_pop = mean(pop))
+
+
+```
+
+```{r}
+
+
+```
+
+## 

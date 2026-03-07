@@ -1,0 +1,104 @@
+---
+title: "Lab 6 Normal Distribution"
+author: "Evan O'Toole"
+date: "`r Sys.Date()`"
+format: docx
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+This is due by 8:00 pm one day after your lab. You can find the submission dropbox in
+
+Crowdmark.
+
+Download the files "Stat123 Lab6 YourLastName.qmd" and "data wk8.csv"from Brightspace and save them in your working directory.
+
+Open the Quarto file and write your code in it. If tidyverse is not installed on your computer, do
+
+so now. Load the package. This will load both dplyr and ggplot2 packages.
+
+Import "data wk8.csv" as a data frame named d6. There are two variables, X and T.
+
+For Questions 1 and 2, use the variable X.
+
+```{r}
+
+library(tidyverse)
+
+d8 <- read.csv(file = "data_wk8.csv", header=T)
+
+#(a) Use the quantile(), or other function to determine and display the minimum and maximum values of the variable. You do not need to save these but you must show that you printed them out.
+
+quantile(d8$X)
+```
+
+```{r}
+
+#Create a ggplot2 histogram of the X variable. Set the y-axis using density scale. Give the histogram border and fill colours of your liking. Name the $X$-axis ``X Values'', and make the title "Histogram and Density Curve of X". 
+
+# Set the minimum and maximum values on the x-axis so that all data points are represented. For example, if the minimum and maximum values of the variables are 40.4 and 55.6 respectively, you should set the histogram values to be 40 and 56 respectively. Set the binwidth to 1.
+
+ggplot(d8, aes(x = X)) + geom_histogram(binwidth = 1, aes(y = after_stat(density)), fill = "blue", color = "black") + ggtitle("Histogram and Density Curve of X") + labs(x = "X Values") + geom_density(col = "orange") + xlim(40, 62)
+```
+
+## Question 2
+
+This question involves gauging whether or not a distribution seems normally distributed.
+
+```{r}
+
+#(a) Does the histogram created in Question 1 seem normally distributed?
+
+# The density curve is not very bell-shaped. Further investigation is required.
+
+
+#(b) Find the 2.5% and 97.5% quantiles of X and save them as qlow and qhigh, respectively.
+
+qlow <- quantile(d8$X, 0.025)
+qhigh <- quantile(d8$X, 0.975)
+
+print(paste("Empirical 2.5th and 97.5th Quantiles: (", qlow, ",", qhigh, ")"))
+
+#(c) Finding the 2.5% and 97.5% quantiles of normally distributed data.
+
+qnorm(0.025, mean = mean(d8$X), sd = sd(d8$X))
+qnorm(0.975, mean = mean(d8$X), sd = sd(d8$X))
+
+#(d) 
+
+#Yes very close.
+
+#(e) More sophisticated tests
+
+qqnorm(d8$X)
+qqline(d8$X, col = "red")
+shapiro.test(d8$X)
+
+#for qqnorm: The qqnorm graph represents a quite straight diagonal line,
+#this means that there is consistency between the standard normal
+#distribution and the d8$X distribution and their quantiles. it also
+#follows the line drawn by qqline well, further indicating normal.
+
+#for shapiro: the W is large reflecting normallity, but, p-value is very small indicating that we should reject the hypotheses that our data is normal.
+
+# Note: There is a data size limit of 5000 for the Shapiro-Wilk test.
+
+
+```
+
+Question 3
+
+```{r}
+
+#ggplot Histogram of T 
+# Reuse the code in question 1 and change the variables.
+
+ggplot(d8, aes(x = T)) + geom_histogram(aes(y = ..density..), col = "orange", fill = "purple") +geom_density(col = "red") + ggtitle("Histogram and density for T") +labs(y = "density", x = "T")
+shapiro.test(d8$T)
+qqnorm(d8$T)
+```

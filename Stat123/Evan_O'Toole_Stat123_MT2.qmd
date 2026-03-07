@@ -1,0 +1,52 @@
+---
+title: "Evan_O'Toole_MT2"
+format: docx
+editor: visual
+---
+
+Evan O'Toole V01003221, Midterm2, test version B.
+
+```{r}
+library(tidyverse)
+
+#a)
+ggplot(airquality, aes(x = Wind)) + geom_density()
+```
+
+```{r}
+#b)
+qqnorm(airquality$Wind)
+qqline(airquality$Wind)
+```
+
+```{r}
+#c)
+shapiro.test(airquality$Wind)
+```
+
+this p-value is high enough that the data does not reject that it follows a normal distribution, more evidence for this is provided by the bellcurve-like density curve and the qqnorm plot (some what matching the line) though it is not perfect.
+
+```{r}
+#d)
+quantile(airquality$Wind, c(0, 0.25, 0.5, 0.75, 1))
+```
+
+```{r}
+#e)
+quantile(airquality$Temp, c(0.05, 0.95))
+#this is the 90% CI end points
+```
+
+```{r}
+#f)
+air = airquality
+air$Month = as.factor(air$Month)
+boxplot(Temp~Month, air, xlab = "months", main = "boxplots for temperatures across 5 months")
+```
+
+```{r}
+#g)
+air = airquality
+air$Month = as.factor(air$Month)
+ggplot(air, aes(x = Month, y = Temp)) + geom_boxplot() + ggtitle("Boxplots for temperatures across 5 months")
+```

@@ -1,0 +1,12 @@
+---
+title: "fInalEXAM123"
+format: docx
+editor: visual
+---
+
+```{r}
+source("chat_GPT.R")
+
+response <- chat_gpt("why wont this work: ggplot(data) + geom_bar(aes(x = Height, fill = Gender), position = \"dodge\")", model = "gpt-4o")
+cat(response)
+```

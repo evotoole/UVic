@@ -1,0 +1,350 @@
+---
+title: "Bivariate Data"
+date: "`r Sys.Date()`"
+format: docx
+editor: source
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+```
+
+# Chapter 12: Describing Relationships between Two Variables
+
+```{r}
+
+#install.packages('gapminder')
+library(gapminder)
+library(tidyverse)
+
+head(gapminder)  # the first few observations with variables
+
+gapminder |> count() # how many observations
+
+gapminder %>% count # "|>" is almost the same as "%>%"
+
+unique(gapminder$country) # countries in the data set
+
+length(unique(gapminder$country))
+
+length(gapminder$country)
+
+```
+
+```{r}
+
+options(scipen=999)
+
+```
+
+Create a scatterplot comparing the GDP per capita and the Life Expectancy
+
+```{r}
+
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) +
+  geom_point() 
+
+plot(gapminder$gdpPercap,gapminder$lifeExp)
+```  
+Note 2: The other thing we notice is that there seem to be a lot of points crowded together, which makes the scatterplot appear messy and difficult to interpret. We should consider what data is being plotted and see if there is anything that should be changed.
+
+Use ggplot2 to display scatterplots with different parameters.
+
+```{r}
+
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape = 0)    
+
+# NA for nothing, '.' for smallest dots, 0 to 25 for different shapes
+
+```
+
+```{r}
+
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape=1, col = "blue") +    # Use hollow circles
+  ggtitle("Life Expectancy vs GDP per Capita") + 
+  labs(x = "GDP per Capita", y = "Life Expectancy in Years")
+
+```
+
+
+```{r}
+
+# looks like most of the data are up to 30000 in GDP per capita
+
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape=1) +    # Use hollow circles
+  geom_smooth(method=lm)+
+  ggtitle("Life Expectancy vs GDP per Capita") + 
+  labs(x = "GDP per Capita", y = "Life Expectancy in Years") +
+  xlim(0, 30000) # change the limits as desired
+
+```
+
+Scatterplot plus an estimated straight line "relationship"
+
+```{r}
+
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape=1) +    # Use hollow circles
+  geom_smooth(method=lm) + # Add linear regression line 
+                           # (by default includes 95% confidence region)
+  ggtitle("Life Expectancy vs GDP per Capita") + 
+  labs(x = "GDP per Capita", y = "Life Expectancy in Years") #+
+#  xlim(0, 4000) 
+
+```
+Scatterplot plus an estimated straight line "relationship"
+
+```{r}
+
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape=1) +    # Use hollow circles
+  geom_smooth(method=lm) + # Add linear regression line 
+                           # (by default includes 95% confidence region)
+  ggtitle("Life Expectancy vs GDP per Capita") + 
+  labs(x = "GDP per Capita", y = "Life Expectancy in Years") +
+  xlim(0, 6000) 
+
+```
+Scatterplot plus an estimated straight line "relationship" without the confidence region
+
+```{r}
+
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape=1) +    # Use hollow circles
+  geom_smooth(method=lm,   # Add linear regression line 
+              se=FALSE) +  # Don't add shaded confidence region
+  ggtitle("Life Expectancy vs GDP per Capita") + 
+  labs(x = "GDP per Capita", y = "Life Expectancy in Years") #+
+#  xlim(0, 4000) 
+
+```
+Scatterplot plus an estimated non-linear "relationship"
+
+```{r}
+
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape=1) +    # Use hollow circles
+  geom_smooth() +          # Add a loess smoothed fit curve with confidence region
+  ggtitle("Life Expectancy vs GDP per Capita") + 
+  labs(x = "GDP per Capita", y = "Life Expectancy in Years") #+
+#  xlim(0, 4000) 
+
+```
+
+Here is another scatterplot.
+Note the display on the x-axis.
+
+```{r}
+
+ggplot(gapminder, aes(x=pop, y=lifeExp)) +
+  geom_point(shape=1)    # Use hollow circles
+```
+
+Plot only data for 1977: Combining dplyr and ggplot2
+
+```{r}
+
+# without the smooth curve
+
+ggplot(gapminder |> filter(year == 1977), aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape=1) +    # Use hollow circles
+  ggtitle("Life Expectancy vs GDP per Capita") + 
+  labs(x = "GDP per Capita", y = "Life Expectancy in Year 1977") #+
+#  xlim(0, 4000) 
+
+
+ggplot(gapminder |> filter(year == 1977), aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape=1) +    # Use hollow circles
+  geom_smooth() +          # Add a loess smoothed fit curve with confidence region
+  ggtitle("Life Expectancy vs GDP per Capita") + 
+  labs(x = "GDP per Capita", y = "Life Expectancy in Year 1977") #+
+#  xlim(0, 4000) 
+
+```
+
+You could also do this in separate steps:
+
+```{r}
+# Step 1: We first need to filter the data so that we have only the gdp per capita and life expectancy data for the year 1977. We can do this in the following way:
+
+gap77 <- gapminder %>% filter(year == 1977)
+head(gap77)
+
+# Step 2: Now plot the filtered data in a scatterplot with updated titles to reflect the change.
+
+ggplot(gap77, aes(x=gdpPercap, y=lifeExp)) +
+  geom_point(shape=1)    # Use hollow circles
+
+```
+
+Another example from "R for Data Science (2e)" Chapter 1.
+
+
+```{r}
+
+library(palmerpenguins)
+head(penguins)
+
+# ggthemes package offers a colorblind safe color palette
+
+# install.packages("ggthemes") run this command only once 
+
+library(ggthemes)
+colnames(penguins)
+
+# variable on the x-axis: flipper length
+# variable on the y-axis: body mass
+
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point()
+
+
+```
+
+```{r}
+# scattered plot by species
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = species)
+) +
+  geom_point()
+
+```
+```{r}
+
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = species)
+) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+```
+
+
+```{r}
+
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species)) +
+  geom_smooth(method = "lm")
+
+```
+
+```{r}
+
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = "lm")
+
+```
+
+
+```{r}
+
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(aes(color = species, shape = species)) +
+  geom_smooth(method = "lm") +
+  labs(
+    title = "Body mass and flipper length",
+    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+    x = "Flipper length (mm)", y = "Body mass (g)",
+    color = "Species", shape = "Species"
+  ) +
+  scale_color_colorblind()
+
+cor(penguins$flipper_length_mm, penguins$body_mass_g, na.rm = TRUE)
+
+```
+
+Correlation Coefficient
+
+```{r}
+
+A = c(100,90,95,92,88)
+B = c(140,90,100,135,80)
+
+plot(A,B)
+
+ggplot(NULL, aes(x = A, y = B)) + geom_point()
+  
+
+cor(A,B)
+cor(B,A)
+
+C = c(-2, -1, 0, 1, 2)
+D = c(4, 1, 0, 1, 4)
+
+cor(C, D)
+ggplot(NULL, aes(x = C, y = D)) + geom_point()
+
+# There is no linear relationship between A and B
+# There is a perfect quadratic relationship.
+```
+
+Practice Problems: Go back to the gapminder dataset and practice your dplyr and ggplot() commands:
+
+```{r}
+# (a) Create a vector which contains the years in the data set that are present for the country Canada.
+
+rows_Canada = which(gapminder$country=="Canada")
+#rows_Canada
+years_Canada = gapminder$year[rows_Canada]
+years_Canada
+# (b) Create a vector which contains the population for Canada throughout those years.
+
+population_Canada = gapminder$pop[rows_Canada]
+#population_Canada
+
+# (d) Plot a scatterplot of the years and population about Canada. What is the direction of the relationship?
+
+plot(years_Canada, population_Canada)
+
+# (f) What is the correlation r between the two variables? Interpret this value.
+
+cor(years_Canada, population_Canada)
+
+# Answer is 0.9987322                                                                                                             # This is the basic R ways of doing this.
+
+# Exercise: Use your knowledge in dplyr to repeat this.
+# Use your favourite search engine if you have to.
+ 
+```
+
+The other way for the above:
+ ``
+```{r}
+
+ggplot(data=gapminder |> filter(country == "Canada"), aes(x = year, y=pop)) + geom_point()
+
+
+gapminder |> filter(country == "Canada") |> summarize(cor=cor(year, pop))
+
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+

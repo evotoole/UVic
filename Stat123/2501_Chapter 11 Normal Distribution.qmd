@@ -1,0 +1,282 @@
+---
+title: "Normal Distribution"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## demo of a histogram
+
+```{r}
+
+# always do this.
+library(tidyverse)
+
+```
+
+
+```{r}
+
+nd <- rnorm(500, mean=50, sd=5)
+nd
+
+# when not working with data frames
+
+ggplot(NULL, aes(x = nd)) + geom_histogram(binwidth = 3, color="black", fill="gray") + ggtitle("Distribution of X") + labs(x = "Values of X")
+
+```
+
+## Basic R histogram and density curve.
+
+```{r}
+CO2
+
+Y=CO2$uptake
+
+hist(Y, main="CO2 uptake", xlab = "Uptake Rate", prob = FALSE, col = "yellow")
+
+hist(Y, main="CO2 uptake", xlab = "Uptake Rate", prob = TRUE, col = "yellow")
+
+#lines(density(Y))
+
+lines(density(Y), col="red")
+
+```
+
+## ggplot fancy histogram and density curve.
+
+```{r}
+
+ggplot(CO2, aes(x = uptake)) + geom_histogram(aes(x=uptake,y= after_stat(density)),
+    binwidth = ) + 
+    geom_density(aes(x=uptake,y=after_stat(density)), col = "red")
+
+```
+
+## ggplot just the density curve.
+
+```{r}
+
+ggplot(CO2, aes(x = uptake)) + geom_density(col = "blue", fill = "yellow")
+
+ggplot(CO2, aes(x = uptake)) + geom_density(col = "blue") # no fill colour
+```
+
+## ggplot fancy histogram and density curve.
+
+```{r}
+ggplot(CO2, aes(x = uptake)) + geom_histogram(aes(x=uptake ,y= after_stat(density)),
+  binwidth = 3) + geom_density(aes(x=uptake,y=after_stat(density)), col = "red") +
+  ggtitle("Distribution of Carbon Dioxide Uptake") + 
+  labs(x = expression(paste("carbon dioxide uptake rates (", mu, "mol/", m^2, " sec)"))) 
+```
+
+## Theoretic normal distribution density curve.
+
+```{r}
+mu <- 20
+sigma <- 5
+
+x <- seq(mu - 3*sigma, mu + 3*sigma, by=0.05)
+#x
+y <- dnorm(x, mean = mu, sd = sigma)
+#y=f(x)
+y
+normaldata <- as.data.frame(cbind(x, y))
+
+ggplot(normaldata, aes(x = x, y = y)) + geom_line()
+
+```
+
+## Example from lecture note.
+
+```{r}
+
+sampleData=read.csv("variable.X.Sample.csv")
+
+head(sampleData)
+
+X=sampleData$X
+
+#Check if data is normally distributed.
+
+#Fast histogram using basic R graphics.
+
+hist(X, main="Distribution of X", xlab="Values of X", prob=TRUE)
+lines(density(X), col="red")
+
+# qq-norm plot
+
+qqnorm(X)
+qqline(X)
+
+# A statistical test called Shapiro-Wilk normality test
+
+shapiro.test(X)
+
+
+# the middle 80%
+
+low <- (1 - .8)/2
+low
+high <- 1 - low
+
+#quantile(X, 0.10)
+
+#quantile(X, 0.90)
+
+quantile(X, c(0.1, 0.9))
+
+
+quantile(X, c(0.3, 0.7))
+
+
+
+quantile(X, c(0.16, 0.84)) # range for 1 sd from mean, empirical rule
+
+quantile(X, c(0.025, 0.975)) # range for 2 sd from mean, empirical rule
+
+xbar=mean(X)
+s=sd(X)
+c(xbar-2*s, xbar+2*s)
+
+qnorm(c(0.1, 0.9), xbar, s) #return the value x such that the probability that a  normal random distribution with mean=xbar and s.d.=s is less than or equal to c(0.1, 0.9).
+ 
+
+pnorm(41.49, mean=xbar, sd=s) #gives the cumulative probability P(X<=x) for a normal distribution with mean=xbar and s.d.=s
+
+pnorm(36.41, xbar, s)
+
+```
+
+
+Example: average lifetime for lightbulbs
+
+```{r}
+# 1. We compute the estimated population mean μ using sample mean x. This will serve as the mean for the approximate normal sampling distribution.
+n <- 80
+xbar <- 103.4
+# 2. We compute the estimated standard error (ese) of the sample mean, which serves as the standard deviation of the approximate normal sampling distribution.
+s <- 22.5
+ese <- s/sqrt(n)
+
+# 3. We use qnorm() function to find 92% confidence interval for the population mean.
+
+conflevel <- .92
+low <- (1 - conflevel)/2
+high <- 1 - low
+
+qnorm(c(low, high), mean = xbar, sd = ese)
+
+```
+
+
+proportion of red cars in Victoria
+
+```{r}
+# 1. What is the observed value of the sample statistic/ the estimate of the population proportion?
+
+n <- 320
+x <- 62
+
+p_hat <- x/n
+
+p_hat
+# 2. Determine a 95% confidence interval for the population proportion p (round to 3 decimal places):
+
+ese <- sqrt(p_hat*(1 - p_hat)/n)
+ese
+
+conflevel <- .95
+
+low <- (1 - conflevel)/2
+high <- 1 - low
+
+round(qnorm(c(low, high), mean = p_hat, sd = ese), 3)
+
+moe <- (qnorm(high, mean = p_hat, sd = ese) - qnorm(low, mean = p_hat, sd = ese))/2
+moe
+
+```
+
+# Determine a 95% confidence interval for the population mean of variable X.
+
+```{r}
+
+sampleData=read.csv("variable.X.Sample.csv")
+head(sampleData)
+
+X=sampleData$X
+x_bar = mean(X)
+s = sd(X)
+n= length(X)
+
+ese = s/sqrt(n) 
+
+conflevel <- .95
+low <- (1 - conflevel)/2
+high <- 1 - low
+
+qnorm(c(low, high), mean = x_bar, sd = ese)
+
+#estimate is x_bar
+#margin of error calculation
+
+moe <- (qnorm(high, mean = x_bar, sd = ese) - qnorm(low, mean = x_bar, sd = ese))/2
+moe
+
+#double check
+
+x_bar - moe
+x_bar + moe
+
+```
+
+```{r}
+x<-seq(-5,5,.01)
+y.norm0<-dnorm(x,mean=0,sd=1)
+y.norm1<-dnorm(x,mean=1,sd=1)
+y.norm2<-dnorm(x,mean=2,sd=1)
+
+
+# set up the plot area
+plot(c(min(x),max(x)),c(min(y.norm0,y.norm1,y.norm2),max(y.norm0,y.norm1,y.norm2)),type="n",
+xlab="x",ylab="Density function: f(x)")
+title("The Normal distribution (sd=1) with different means")
+lines(x,y.norm0, col="red")
+lines(x,y.norm1,col="purple")
+lines(x,y.norm2,col="orange")
+legend(x=c(-5.1,-3.1),y=c(.4,.28),legend=c('N(0,1)','N(1,1)','N(2,1)'),fill=c('red','purple','orange'))
+```
+
+```{r}
+x<-seq(-5,5,.01)
+y.norm0<-dnorm(x,mean=0,sd=1)
+y.norm1<-dnorm(x,mean=0,sd=1.5)
+y.norm2<-dnorm(x,mean=0,sd=2)
+
+
+# set up the plot area
+plot(c(min(x),max(x)),c(min(y.norm0,y.norm1,y.norm2),max(y.norm0,y.norm1,y.norm2)),type="n",
+xlab="x",ylab="Density function: f(x)")
+title("The Normal distribution (mean=0) with different standard deviation")
+lines(x,y.norm0)
+lines(x,y.norm2,col="green")
+lines(x,y.norm1,col="blue")
+legend(x=c(2,4.2),y=c(.4,.28),legend=c('N(0,1)','N(0,1.5)','N(0,2)'),fill=c('black','blue','green'))
+```
+
+```{r}
+s = sd(X)
+n= length(X)
+ese = s/sqrt(n) 
+ese
+```
+
+```{r}
+
+```
+

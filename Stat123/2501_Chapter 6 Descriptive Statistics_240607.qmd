@@ -1,0 +1,324 @@
+---
+title: "Chapter 6"
+format: docx
+editor: visual
+---
+
+## Mode Examples
+
+```{r}
+
+tab1 <- as.data.frame(cbind(LETTERS[1:6], c(1, 2, 3, 2, 3, 1)))
+names(tab1) <- c("Letter", "Frequency")
+tab1
+```
+
+```{r}
+
+tab2 <- as.data.frame(cbind(LETTERS[1:6], rep(5,6)))
+names(tab2) <- c("Letter", "Frequency")
+tab2
+```
+
+## Median
+
+```{r}
+
+samp.even <- c(83, 83, 63, 74, 83, 79, 61, 82, 85, 62)
+samp.even
+
+order.even <- sort(samp.even) 
+order.even
+
+n <- length(order.even)
+n
+
+#if n is even
+medn1 <- (order.even[n/2] + order.even[n/2 + 1])/2
+medn1
+
+samp.odd <- c(83, 83, 63, 2000, 74, 83, 79, 61, 82, 85, 62)
+samp.odd
+
+order.odd <- sort(samp.odd, decreasing = FALSE) 
+order.odd
+
+n <- length(order.odd)
+n
+
+#if n is odd
+index <- (n-1)/2 + 1 # or (n+1)/2
+medn2 <- order.odd[index]
+medn2
+
+
+#R built-in median function
+median(samp.even)
+median(samp.odd)
+```
+
+## Mean
+
+```{r}
+
+#Arithmetic Mean
+
+m1 <- mean(samp.even)
+#m1
+
+m2 <- mean(samp.odd)
+#m2
+
+# If your dataset contains missing values (NA), use 
+# mean(samp.odd, na.rm = TRUE)
+# If you want to exclude the top and bottom 100p % of the data (outliers), 
+# you can use mean(samp.odd, trim = p) where 0 <= p <= 0.5.
+
+
+#Weighted Mean
+
+score <- c(82, 60, 77, 90, 70)
+wt1 <- c(.15, .10, .15, .10, .50)
+wt2 <- c(30, 50, 40, 25, 80)
+
+w_samp <- data.frame(cbind(score, wt1, wt2))
+#w_samp
+
+w_samp0 <- data.frame(rbind(score, wt1, wt2))
+#w_samp0
+
+wt_mean1 <- sum(score*wt1)
+#wt_mean1
+
+# wt_mean2 <- sum(score*wt2/sum(wt2))
+# wt_mean2
+
+# wt_mean2 <- sum(score*wt2)/sum(wt2)
+# wt_mean2
+
+wt_mean3 <- sum(score*wt2)
+#wt_mean3
+
+stock <- read.csv("stock.csv")
+stock
+colnames(stock)
+mean(stock$Price)
+mean(stock$Ratio, na.rm=TRUE)
+mean(stock$Return, na.rm=TRUE)
+
+#Geometric Mean
+
+x <- c(2, 4, 8)
+
+G <- prod(x)^(1/length(x))
+G
+
+G <-exp(mean(log(x)))
+G
+
+# Geometric mean applies to price ratio minus 1 will give the effective rate
+# of return over the time you hold the stock.
+
+
+exp(mean(log(stock$Ratio), na.rm = TRUE)) - 1
+
+prod(stock$Ratio)^(1/length(stock$Ratio)) - 1
+
+#Harmonic Mean
+
+testcar <- read.csv("speed.csv")
+testcar$speed
+mean(testcar$speed) # is not the best average speed calculation
+mean(testcar[,3])
+
+# harmonic mean of the speed is most appropriate if the 
+# distance intervals are kept constant
+
+1/mean(1/testcar$speed)
+
+# it is the same as the total distance/total time travelled
+
+sum(testcar$distance)/sum(testcar$time)
+
+H <- 1/mean(1/x)
+H
+```
+
+## Dispersion
+
+## Range
+
+```{r}
+samp <- c(83, 83, 63, 2000, 74, 83, 79, 61, 82, 85, 62)
+samp
+
+#order.odd <-sort(samp, decreasing = FALSE) 
+#order.odd
+
+#c(min(samp), max(samp))
+r=range(samp)
+r
+range=r[2]-r[1]
+range
+
+max(samp) - min(samp)
+
+```
+
+## Quantiles
+
+```{r}
+
+samp <- c(81, 93, 63, 2000, 74, 83, 79, 61, 82, 85, 62)
+
+freq <- table(samp)
+
+cum_freq <- cumsum(freq)
+cum_freq
+
+rel_cum_freq <- cum_freq/sum(freq)
+rel_cum_freq
+
+per_cum_freq <- rel_cum_freq*100
+per_cum_freq
+
+#another example
+
+samp2 <- c(83, 83, 62, 2000, 74, 83, 79, 61, 82, 85, 62)
+
+samp.tab <- table(samp2)
+samp.tab
+
+cum_freq <- cumsum(samp.tab)
+cum_freq
+
+rel_cum_freq <- cum_freq/sum(samp.tab)
+rel_cum_freq
+
+per_cum_freq <- rel_cum_freq*100
+per_cum_freq
+
+# class(rel_cum_freq)
+
+freq1 <- as.data.frame(cbind(as.numeric(names(samp.tab)), samp.tab))
+freq1
+
+names(freq1) <- c("value", "count")
+freq1
+
+freq2 <- as.data.frame(cbind(freq1, freq1$count/(sum(freq1$count))))
+names(freq2) <- c("value", "count", "rel_freq")
+freq2
+
+freq <- as.data.frame(cbind(freq2, cumsum(freq2$rel_freq)))
+names(freq) <- c("value", "count", "rel_freq", "cum_rel_freq")
+freq
+
+rownames(freq) <- NULL #if you find the rownames annoying
+freq
+
+```
+
+## airquality data frame
+
+```{r}
+
+#?airquality
+
+temp <- airquality$Temp
+
+quantile(temp, 0)
+min(temp)
+
+quantile(temp, 0.25)
+
+quantile(temp, 0.50)
+median(temp)
+
+quantile(temp, 0.75)
+
+quantile(temp, 1)
+max(temp)
+
+quantile(temp, c(0, 1)) # the min and max
+quantile(temp, c(0.2, 0.8))  # the values covering the middle 60%
+
+quantile(temp, c(0.25, 0.75)) # the first quartile and third quartile
+IQR(temp) # the interquartile range, that is, 3rd quartile - 1st quartile
+
+quantile(temp) # five number summary
+summary(temp) # five number summary plus the mean
+
+```
+
+## Box plot or Box-and-Whisker plot
+
+```{r}
+
+boxplot(temp)
+
+# boxplots for Temp for each month group
+boxplot(temp~airquality$Month)
+
+library(ggplot2)
+
+ggplot(airquality, aes(y=Temp)) + geom_boxplot()
+
+# ggboxplots for Temp for each month group
+
+ggplot(data = airquality, aes(y = Temp, x = as.factor(Month))) + geom_boxplot() + ggtitle("Temperature by Month") + labs(x = "Numerical Month value (5 = May, 6 = June, etc.)")
+
+ggplot(data = airquality, aes(y = Temp, x = as.factor(Month))) + geom_boxplot() + ggtitle("Temperature by Month") + labs(x = "Numerical Month value (5 = May, 6 = June, etc.)")
+
+```
+
+## Deviation from the mean
+
+```{r}
+temp <- airquality$Temp
+
+n <- length(temp)
+n
+
+#mean deviation
+
+MD <- mean(temp - mean(temp))
+MD
+# =0
+
+#mean absolute deviation
+MAD <- mean(abs(temp - mean(temp)))
+MAD
+
+#mean square deviation
+
+MSD <- mean((temp - mean(temp))^2)
+MSD
+
+#variance
+
+V1 <- (sum((temp - mean(temp))^2))/(n-1)
+V1
+var(temp)
+
+#standard deviation
+
+SD1 <- sqrt(V1)
+SD1
+sd(temp)
+
+#Example from note
+
+eg_vec <- c(20, 15, 23, 10, 18)
+
+mean(eg_vec)
+var(eg_vec)
+sd(eg_vec)
+
+```
+
+```{r}
+hist(temp)
+mean(temp)
+median(temp)
+```
