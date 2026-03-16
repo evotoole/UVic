@@ -13,6 +13,10 @@ var right = 6.0;
 var ytop =6.0;
 var bottom = -6.0;
 
+var colorEffect = 0.0;        // current shader value
+var hitFlashTimer = 0.0;      // counts down after a hit
+var boardHit = false;         // did the javelin reach the board
+
 
 var lightPosition2 = vec4(100.0, 100.0, 100.0, 1.0 );
 var lightPosition = vec4(0.0, 0.0, 100.0, 1.0 );
@@ -51,7 +55,7 @@ var resetTimerFlag = true;
 // Then the animation is simply evolving those DOF over time.
 var currentRotation = [0,0,0];
 
-var useTextures = 0;
+var useTextures = 1;
 
 //making a texture image procedurally
 //Let's start with a 1-D array
@@ -387,7 +391,7 @@ function drawFaceHead1(){
 
     gl.bindTexture(gl.TEXTURE_2D, textureArray[3].textureWebGL);
     Cube.drawFace();
-    gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 0);
+    gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 1);
 }
 
 function drawFaceHead2(){
@@ -399,7 +403,7 @@ function drawFaceHead2(){
 
     gl.bindTexture(gl.TEXTURE_2D, textureArray[4].textureWebGL);
     Cube.drawFace();
-    gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 0);
+    gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 1);
 }
 
 function drawFaceHead3(){
@@ -421,7 +425,7 @@ function drawBoard1(){
 
     gl.bindTexture(gl.TEXTURE_2D, textureArray[6].textureWebGL);
     Cube.drawBoardFront();
-    gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 0);
+    gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 1);
 }
 
 
@@ -479,6 +483,27 @@ function gPush() {
     MS.push(modelMatrix);
 }
 
+function updateColorEffect() {
+
+
+    if (boardHit) {
+        // count down the hit flash
+        colorEffect = (Math.sin(increment_time * 1.5) * 0.5 + 0.5); // positive = red
+    } else {
+        // no hit — pulse green using a sine wave over time
+        colorEffect = -1 * (Math.sin(increment_time * 1.5) * 0.5 + 0.5);
+        // negative = green, sine wave makes it pulse smoothly
+    }
+
+    gl.uniform1f(gl.getUniformLocation(program, "colorEffect"), colorEffect);
+}
+
+function clearColorEffect() {
+    colorEffect = 0;
+
+    gl.uniform1f(gl.getUniformLocation(program, "colorEffect"), colorEffect);
+}
+
 
 increment_time =0;
 var javelinStartTime = 0;
@@ -489,6 +514,7 @@ var gravity = 9.8;
 function javelinTravel1(start_time, stop_point_x, stop_point_z, up_speed, forward_speed, fig_num){
    // stop_point_x = 9;
    // stop_point_z = -0.8;
+    
     var t = increment_time - start_time;
     var x = forward_speed*javelinVx * t;
     var z = up_speed * javelinVz * t - 0.25 * gravity * t * t; 
@@ -1008,7 +1034,6 @@ function render(timestamp) {
     
     
     
-    
     // set all the matrices
     setAllMatrices();
     
@@ -1029,7 +1054,7 @@ function render(timestamp) {
 
     increment_time += dt*1.5;
     
-	gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 0);
+	gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 1);
 
   
 
@@ -1038,6 +1063,12 @@ function render(timestamp) {
     }
     if (scene_counter == 1){ //begin first scene
         sceneOne();
+        if (increment_time > throw_one_time+2 && increment_time < throw_one_time+5){
+            updateColorEffect();
+        }
+        if (increment_time > throw_one_time+5 && increment_time < throw_one_time+6){
+            clearColorEffect();
+        }
     }
     
     else if (scene_counter == 2){ //begin second scene
@@ -1046,13 +1077,27 @@ function render(timestamp) {
             increment_flag1 = 1;
         }
         sceneTwo();
+        boardHit = true;
+        if (increment_time > throw_one_time+2 && increment_time < throw_one_time+5){
+            updateColorEffect();
+        }
+        if (increment_time > throw_one_time+5 && increment_time < throw_one_time+6){
+            clearColorEffect();
+        }
     }
     else{
+        boardHit = false;
         if (increment_flag2 == 0) {
             increment_time = 0;
             increment_flag2 = 1;
         }
         sceneThree();
+        if (increment_time > throw_one_time+2 && increment_time < throw_one_time+5){
+            updateColorEffect();
+        }
+        if (increment_time > throw_one_time+5 && increment_time < throw_one_time+6){
+            clearColorEffect();
+        }
     }
 
 
@@ -1068,7 +1113,7 @@ function render(timestamp) {
 		gl.uniform1i(gl.getUniformLocation(program, "texture3"), 0);
         gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 1);
         drawGround();
-        gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 0);
+        gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 1);
         gPop();
 	}
 	gPop() ;

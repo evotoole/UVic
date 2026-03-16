@@ -8,7 +8,8 @@ in vec3 vNormal;
 in vec4 vColor; // Note this is not actually getting used the compiler will optimize it out which will throw vertexAttribPointer errors on javascript side
 in vec2 vTexCoord;
 
-out vec4 fColor;
+out vec3 fPos;
+out vec3 fN;
 out vec2 fTexCoord;
 
 uniform vec4 ambientProduct, diffuseProduct, specularProduct;
@@ -17,42 +18,23 @@ uniform mat4 normalMatrix;
 uniform mat4 projectionMatrix;
 uniform vec4 lightPosition;
 uniform float shininess;
-
+ 
 
 void
 main()
 {
-    // Transform vertex normal into eye coordinates
-    vec3 pos = (modelViewMatrix * vPosition).xyz;
-    //vec3 N = normalize( (modelViewMatrix*vec4(vNormal,0.0)).xyz);
+    
+    vec3 pos = (modelViewMatrix * vPosition).xyz; //transform vertex normal vector into camera coordinates
     vec3 N = normalize( (normalMatrix*vec4(vNormal,0.0)).xyz);
-    
-
-    vec3 L = vec3(normalize(lightPosition.xyz-pos)) ;
-    vec3 V = normalize(-pos.xyz) ;
-    vec3 R = reflect(-L, N) ;
-
-
-    // Compute terms in the illumination equation
-    float lightDotNormal = max( dot(L, N), 0.0 );
-    vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
-    diffuse = diffuseProduct * lightDotNormal;
-	
-	
-    float reflectedDotViewShiny = pow( max(dot(R, V), 0.0), shininess );
-	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
-    specular = specularProduct * reflectedDotViewShiny;
-    
-    if( dot(L, N) < 0.0 ) {
-        specular = vec4(0.0, 0.0, 0.0, 1.0);
-    }
     
     gl_Position = projectionMatrix * modelViewMatrix * vPosition;
     
-	fTexCoord = vTexCoord;
-    fColor = ambientProduct + diffuse + specular;
-    fColor.a = 1.0;
+    fPos = pos;       //pass the position to fragment shader
+    fN = N;           //pass normal to the fragment shader
+    fTexCoord = vTexCoord;
+    gl_Position = projectionMatrix * modelViewMatrix * vPosition;
 }
+
 </script>
 
 <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
@@ -62,23 +44,83 @@ precision mediump float;
 uniform sampler2D texture1;
 uniform sampler2D texture2;
 uniform int useTextures;
-
-in vec4 fColor;
+in vec3 fPos;
+in vec3 fN;
 in vec2 fTexCoord;
+uniform float colorEffect;
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+uniform vec4 lightPosition;
+uniform float shininess;
 
-layout(location=0) out vec4 fragColor ;
+layout(location=0) out vec4 fragColor;
 
 void
 main()
 {
-	if( useTextures == 1)
-    {
-		fragColor = texture( texture1, fTexCoord );
-	}
-	else
-	{
-		fragColor = texture( texture2, fTexCoord );
-	}
+    // re-normalize because interpolation can change vector length
+    vec3 N = normalize(fN); //normal of the fragment
+    vec3 L = normalize(lightPosition.xyz - fPos); //direction of the light
+    vec3 V = normalize(-fPos); //direction to the camera
+
+    // BLINN-PHONG CHANGE
+    // Old Phong used: vec3 R = reflect(-L, N); then dot(R, V)
+    // Blinn-Phong uses a halfway vector instead — simpler and more accurate
+    vec3 H = normalize(L + V);
+
+    float lightDotNormal = max(dot(L, N), 0.0);
+    vec4 diffuse = diffuseProduct * lightDotNormal;
+    vec4 specular = specularProduct * pow(max(dot(N, H), 0.0), shininess);
+
+    if (dot(L, N) < 0.0) specular = vec4(0.0, 0.0, 0.0, 1.0);
+
+    vec4 litColor = ambientProduct + diffuse + specular;
+    litColor.a = 1.0;
+
+    float brightness = dot(L, N);
+    if (brightness < 0.3) brightness = 0.1;
+    else if (brightness < 0.7) brightness = 0.5;
+    else brightness = 1.0;
+
+    vec4 celDiffuse = diffuseProduct * brightness;
+    litColor = ambientProduct + celDiffuse + specular;
+    litColor.a = 1.0;
+
+    // how much is this surface facing the camera?
+    // 1.0 = facing you, 0.0 = sideways, negative = facing away
+    float facing = dot(N, V);
+
+
+	if (useTextures == 1) {
+        fragColor = texture(texture1, fTexCoord);
+        
+    } else {
+
+        // if facing away (negative), make it blue
+        // clamp so we only get the away-facing surfaces
+        float awayFromCamera = max(-facing, 0.0);
+
+        // add blue glow to surfaces facing away
+        fragColor = litColor + awayFromCamera * vec4(0.0, 0.5, 1.0, 0.0);
+      
+    }
+
+    // receives a value from JS: positive = hit (red), negative = miss (green), 0 = neutral
+   
+
+    // inside main(), after fragColor is set:
+
+    // mix fragColor toward green or red based on colorEffect value
+    // mix(a, b, t) blends from a to b as t goes from 0 to 1
+    // abs() gets the intensity regardless of whether it's positive or negative
+    float intensity = abs(colorEffect);
+
+    if (colorEffect < 0.0) {
+        // negative value means no hit — pulse toward green
+        fragColor = mix(fragColor, vec4(0.0, 1.0, 0.0, 1.0), intensity * 0.6);
+    } else if (colorEffect > 0.0) {
+        // positive value means hit — flash toward red
+        fragColor = mix(fragColor, vec4(1.0, 0.0, 0.0, 1.0), intensity * 0.6);
+    }
 }
 </script>
 
