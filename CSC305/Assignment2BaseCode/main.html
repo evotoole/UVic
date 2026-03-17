@@ -91,10 +91,10 @@ void main()
         fragColor = litColor; //otherwise use the computed lit color
     }
 
-    //RED AND GREEN SHADER EFFECT:
-    float intensity = abs(colorEffect); //find the absolute value of the global variable from main.js to use for strength of red or green
+    //RED AND GREEN SHADER EFFECT. colorEffect passed from main.js:
+    float intensity = abs(colorEffect); //find the absolute value of colorEffect from main.js to use for strength of red or green
     if (colorEffect < 0.0) { //if the color effect value passed is less than zero then this means we want green
-        fragColor = fragColor + (intensity * 0.6) * (vec4(0.0, 1.0, 0.0, 1.0) - fragColor); //adjust amount of green to blend into each fragment
+        fragColor = fragColor + (intensity * 0.6) * (vec4(0.0, 1.0, 0.0, 1.0) - fragColor); //adjust amount of green to mix with each fragment
     } else if (colorEffect > 0.0) { //if the color effect value passed is greater than zero then this means we want red
         fragColor = fragColor + (intensity * 0.6) * (vec4(1.0, 0.0, 0.0, 1.0) - fragColor); //adjust amount of red to blend into each fragment
     }

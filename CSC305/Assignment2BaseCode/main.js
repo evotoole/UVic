@@ -484,36 +484,29 @@ function gPush() {
 }
 
 function updateColorEffect() {
-
-
     if (boardHit) {
-        // count down the hit flash
-        colorEffect = (Math.sin(increment_time * 1.5) * 0.5 + 0.5); // positive = red
-    } else {
-        // no hit — pulse green using a sine wave over time
-        colorEffect = -1 * (Math.sin(increment_time * 1.5) * 0.5 + 0.5);
-        // negative = green, sine wave makes it pulse smoothly
+        colorEffect = (Math.sin(increment_time * 1.5) * 0.5 + 0.5); //positive = red. sin makes it pulse across time.
+    } 
+    else {
+        colorEffect = -1 * (Math.sin(increment_time * 1.5) * 0.5 + 0.5); //negative = green. sin makes it pulse across time.
     }
-
     gl.uniform1f(gl.getUniformLocation(program, "colorEffect"), colorEffect);
 }
 
 function clearColorEffect() {
-    colorEffect = 0;
-
+    colorEffect = 0; //when we want to clear the green or red tint call this.
     gl.uniform1f(gl.getUniformLocation(program, "colorEffect"), colorEffect);
 }
 
 
 increment_time =0;
 var javelinStartTime = 0;
-var javelinVx = 6;  // horizontal speed
-var javelinVz = 3;  // initial upward velocity
+var javelinVx = 6;  //horizontal speed
+var javelinVz = 3;  //initial upward speed
 var gravity = 9.8;
 
 function javelinTravel1(start_time, stop_point_x, stop_point_z, up_speed, forward_speed, fig_num){
-   // stop_point_x = 9;
-   // stop_point_z = -0.8;
+
     
     var t = increment_time - start_time;
     var x = forward_speed*javelinVx * t;
@@ -529,8 +522,8 @@ function javelinTravel1(start_time, stop_point_x, stop_point_z, up_speed, forwar
     if (x < stop_point_x){
     gPush();
         gl.bindTexture(gl.TEXTURE_2D, textureArray[0].textureWebGL); 
-        gTranslate(0.5, -1, 2.3);   // launch position
-        gTranslate(x, 0, z);         // x is horizontal, z is up/down
+        gTranslate(0.5, -1, 2.3);   //launch here
+        gTranslate(x, 0, z);        // x is horizontal. z is up/down
         gRotate(-z -4,0,1,0);
         gScale(1, 0.04, 0.04);
         drawSphere();
@@ -539,8 +532,8 @@ function javelinTravel1(start_time, stop_point_x, stop_point_z, up_speed, forwar
     else{
         gPush();
         gl.bindTexture(gl.TEXTURE_2D, textureArray[0].textureWebGL); 
-        gTranslate(0.5, -1, 2.3);   // launch position
-        gTranslate(stop_point_x, 0, stop_point_z);         // x is horizontal, z is up/down
+        gTranslate(0.5, -1, 2.3);   // launch here
+        gTranslate(stop_point_x, 0, stop_point_z);        //x is horizontal. z is up/down
         gScale(1, 0.04, 0.04);
         drawSphere();
         gPop();
@@ -549,7 +542,7 @@ function javelinTravel1(start_time, stop_point_x, stop_point_z, up_speed, forwar
 
 function drawCoreFigure(fig_num){
     // TORSO 
-    gPush(); 
+    gPush();  //basically all this is just finding out whether we should draw the torso green or blue depending on the scene and figure.
         if (scene_counter == 1 && fig_num == 1){
             gl.bindTexture(gl.TEXTURE_2D, textureArray[7].textureWebGL);
         }
@@ -574,7 +567,7 @@ function drawCoreFigure(fig_num){
     gPop(); 
 
     // HEAD 
-    gPush();
+    gPush(); //decides whether the face should be sad or happy depending on the figure and the time.
         if (scene_counter == 1 && fig_num == 1){
             gTranslate(0, 0, 2);
             gRotate(90,0,1,0);
@@ -770,17 +763,15 @@ function drawLegs(){
 
 function standAnimation1(fig_num){
     gPush();
-    drawLegs();
-    drawCoreFigure(fig_num);
-    drawRightArm(0, 99);
-    drawLeftArm();
+    drawLegs(); //draws legs
+    drawCoreFigure(fig_num); //draws the torso etc.
+    drawRightArm(0, 99); //draws righ arm
+    drawLeftArm(); //draws left arm
     gPop();
 }
 
 function throwAnimation1(end_time, fig_num){
     gPush();
-   // gRotate(10*increment_time, 1, 0, 0); 
-   // gRotate(10*increment_time, 0, 0, 1); 
     drawLegs();
     drawCoreFigure(fig_num);
     drawRightArm(1, end_time);
@@ -878,14 +869,10 @@ function throwLogic(fig_num){
 }
 
 function sceneOne(){
-    // Now let's draw a shape animated!
-	// You may be wondering where the texture coordinates are!
-	// We've modified the object.js to add in support for this attribute array!
     gPush();
     gTranslate(-4,0,1);
-   // gRotate(50*Math.sin(increment_time),0,0,1);
 
-    throwLogic(1); //contains the logic and timing for when javelin throws are called
+    throwLogic(1); //contains the logic and timing for when javelin throws are called. one represents the character 1 is throwing
     
     
     gPush(); //add the watching character
@@ -899,19 +886,16 @@ function sceneOne(){
     gPop();
 
     gPush();
-        drawBoard();
+        drawBoard(); //draws the board which the javelin is thrown at.
     gPop();
 }
 
 function sceneTwo(){
-    // Now let's draw a shape animated!
-	// You may be wondering where the texture coordinates are!
-	// We've modified the object.js to add in support for this attribute array!
     gPush();
     gTranslate(-4,0,1);
    // gRotate(50*Math.sin(increment_time),0,0,1);
 
-    throwLogic(2); //contains the logic and timing for when javelin throws are called
+    throwLogic(2); //contains the logic and timing for when javelin throws are called. 2 represents the character 2 is throwing.
     
     
     gPush(); //add the watching character
@@ -925,7 +909,7 @@ function sceneTwo(){
     gPop();
 
     gPush();
-        drawBoard();
+        drawBoard(); //draws the board which the javelin is thrown at.
     gPop();
 }
 
@@ -940,7 +924,7 @@ function sceneThree(){
     gPush(); //add the watching character
         gTranslate(3,-6,0);
         gRotate(90,0,0,1)
-        standAnimation1(1);
+        standAnimation1(1); 
     gPop();
 
 
@@ -948,27 +932,21 @@ function sceneThree(){
     gPop();
 
     gPush();
-        drawBoard();
+        drawBoard(); //draws the board which the javelin is thrown at.
     gPop();
 }
 
 function viewHandler(start,end){
-    if (increment_time > start && increment_time < end) {
-
-        let progress = (increment_time - start) / (end - start);
-        progress = Math.max(0, Math.min(1, progress));
-    
-        // Ease-out
+    if (increment_time > start && increment_time < end) { //zoom in etc. if in this time range (at about first throw)
+        progress = (increment_time - start) / (end - start);
         progress = 1 - Math.pow(1 - progress, 2);
+
+        radius = 30 * (1 - 0.5 * progress); //zoom in
     
-        // Radius shrinks
-        let radius = 30 * (1 - 0.5 * progress);
+        z = 10 - 7 * progress;
     
-        // Z decreases but stops a little early (only goes to 3 instead of 0)
-        let z = 10 - 7 * progress;
-    
-        // Smoothly reduce angular velocity WITHOUT flipping direction
-        let slowed_time = increment_time - progress * (increment_time - start);
+        //slow down while zooming in.
+        slowed_time = increment_time - progress*(increment_time - start);
     
         eye = vec3(
             radius * Math.cos(slowed_time),
@@ -977,9 +955,9 @@ function viewHandler(start,end){
         );
     }
     
-    else {
+    else { //just keep spinning around the figures.
     
-        eye = vec3(
+        eye = vec3( //standard radius etc.
             30 * Math.cos(increment_time/1.3),
             30 * Math.sin(increment_time/1.3),
             10
@@ -1069,12 +1047,12 @@ function render(timestamp) {
         scene_counter += 1
     }
     if (scene_counter == 1){ //begin first scene
-        sceneOne();
+        sceneOne(); //handles almost everything for sceneone
         if (increment_time > throw_one_time+2 && increment_time < throw_one_time+5){
-            updateColorEffect();
+            updateColorEffect(); //pulse green
         }
         if (increment_time > throw_one_time+5 && increment_time < throw_one_time+6){
-            clearColorEffect();
+            clearColorEffect(); //clear the green
         }
     }
     
@@ -1083,27 +1061,27 @@ function render(timestamp) {
             increment_time = 0;
             increment_flag1 = 1;
         }
-        sceneTwo();
+        sceneTwo(); //handles almost everything for scenetwo
         boardHit = true;
         if (increment_time > throw_one_time+2 && increment_time < throw_one_time+5){
-            updateColorEffect();
+            updateColorEffect(); //pulse red
         }
         if (increment_time > throw_one_time+5 && increment_time < throw_one_time+6){
-            clearColorEffect();
+            clearColorEffect(); //clear the red
         }
     }
-    else{
+    else{ //begin the third scene
         boardHit = false;
         if (increment_flag2 == 0) {
             increment_time = 0;
             increment_flag2 = 1;
         }
-        sceneThree();
+        sceneThree(); //handles almost everything for sceneThree
         if (increment_time > throw_one_time+2 && increment_time < throw_one_time+5){
-            updateColorEffect();
+            updateColorEffect(); //pulse green
         }
         if (increment_time > throw_one_time+5 && increment_time < throw_one_time+6){
-            clearColorEffect();
+            clearColorEffect(); //clear the green.
         }
     }
 
