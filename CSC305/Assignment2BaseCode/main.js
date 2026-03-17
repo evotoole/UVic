@@ -643,7 +643,7 @@ function drawCoreFigure(fig_num){
 }
 
 function drawRightArm(throw_flag, end_time){
-
+    gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 0);
     gPush();
         gl.bindTexture(gl.TEXTURE_2D, textureArray[5].textureWebGL); 
         gTranslate(0, -0.5, 1.3);          
@@ -658,8 +658,11 @@ function drawRightArm(throw_flag, end_time){
         // shoulder sphere at joint
         gPush();
             gScale(0.2, 0.2, 0.2);
+            
+            setColor(vec4(0,1,1,1));
             drawSphere();
         gPop();
+
 
         // UPPER ARM
         gPush();
@@ -687,21 +690,24 @@ function drawRightArm(throw_flag, end_time){
                 gTranslate(0, 0, -0.3);   
                 gScale(0.07, 0.07, 0.35);
                 drawCube();
+                
             gPop();
             if ((increment_time < end_time-0.6) && throw_flag){
             // SPEAR
             gPush();
+            gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 1);
                 gl.bindTexture(gl.TEXTURE_2D, textureArray[0].textureWebGL); 
                 gTranslate(0, 0, -0.65);   
                 gScale(1, 0.04, 0.04);
                 drawSphere();
+                gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 0);
             gPop();
             }
 
         gPop(); 
 
     gPop(); 
-
+    gl.uniform1i(gl.getUniformLocation(program, "useTextures"), 1);
 }
 
 function drawLeftArm(){
@@ -1027,6 +1033,7 @@ function render(timestamp) {
     // set the camera matrix
     viewMatrix = lookAt(eye, at, up);
     
+  
     // set the projection matrix
     
     projectionMatrix = ortho(left, right, bottom, ytop, near, far);
