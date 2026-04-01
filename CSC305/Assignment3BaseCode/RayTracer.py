@@ -12,7 +12,7 @@ if len(sys.argv) > 1:
     filename = sys.argv[1]
     print(f"filename recieved: \"{filename}\"")
 else:
-    print("no file name found")
+    print("no file named")
 
 with open(filename, 'r') as file:
     for i, line in enumerate(file):
@@ -55,9 +55,6 @@ viewscreen = ViewScreen(
 )
 
 
-color_line1 = [0,0,0,255]
-
-
 
 def get_pixel_data(i,j):
     near_y = 1-  (i + 0.5 )/int(viewscreen.res_y) #+0.5 to make sure we are refering to the center of the pixel
@@ -72,8 +69,6 @@ def get_pixel_data(i,j):
 def ray_trace(origin, direction, depth):
     if depth > MAX_DEPTH:
         return np.array([0,0,0])
-    
-    
 
     final = None
     for sphere in sphere_list:
@@ -86,7 +81,7 @@ def ray_trace(origin, direction, depth):
             if final is None or temp[0] < final[0]:
                 final = [temp[0], temp[1], sphere]
 
-    #nothing then do background
+    #if nothing then do background
     if final is None:
         if depth == 0:
             return [background.r, background.g, background.b]
@@ -142,14 +137,10 @@ def ray_trace(origin, direction, depth):
         R_4d = np.array([R[0], R[1], R[2], 0])
         offset_origin = hit_point[:3] + 0.0001 * R
         offset_origin_4d = np.array([offset_origin[0], offset_origin[1], offset_origin[2], 1])
-        print(f"R direction: {R_4d}, offset_origin: {offset_origin_4d}")
+   
         Ir = ray_trace(offset_origin_4d, R_4d, depth + 1)
-        print(f"Ir: {Ir}, hit_sphere: {hit_sphere.name}")
-        print(f"n: {n[:3]}, v: {v}")
-        #print(Ir)
- 
-            
 
+        #print(Ir)
     return np.clip(color + kr * Ir, 0, 1)
 
 
@@ -161,40 +152,34 @@ def ADS(sphere, point, light, origin): #input the point of intersection on the s
     point = point[:3]
     origin = origin[:3]
 
-    inv_mat = get_inv_mat_sphere(sphere)
+    inv_mat = get_inv_mat_sphere(sphere) 
     inv_transpose = np.transpose(inv_mat)
 
-    P_obj = np.matmul(inv_mat, np.array([point[0], point[1], point[2], 1]))
+    #find normal
+    P_obj = np.matmul(inv_mat, np.array([point[0], point[1], point[2], 1]))   
     if coord_point == 2:
         N_obj = np.array([-P_obj[0], -P_obj[1], -P_obj[2], 0])
     else:
         N_obj = np.array([P_obj[0], P_obj[1], P_obj[2], 0])
-    
     N_world = np.matmul(inv_transpose, N_obj)[:3]
-
     n = N_world / np.linalg.norm(N_world)
 
-    L = light_pos - point
+    L = light_pos - point #phong lighting.
     l = L / np.linalg.norm(L)
-
     V = origin - point
     v = V / np.linalg.norm(V)
-
     R = 2 * np.dot(n, l) * n - l
     r = R / np.linalg.norm(R)
 
     na = np.array([0,0,0])
-    if np.dot(n,l) <=0:
+    if np.dot(n,l) <=0: #light is behind the surface so ignore it.
         return (na, na, na)
 
-    sphere_color_intensity = np.array([float(sphere.r),float(sphere.g),float(sphere.b)])
+    sphere_color_intensity = np.array([float(sphere.r),float(sphere.g),float(sphere.b)]) #all the spheres data is held in an instance of the object. get this info to compute ADS
     light_color_intensity = np.array([float(light.ir),float(light.ig),float(light.ib)])
-
-
     specular_intensity = light_color_intensity * float(sphere.ks) * (max(0, np.dot(v, r)) ** float(sphere.n))
     ambient_intensity = sphere_color_intensity * float(sphere.ka)
     diffuse_intensity = light_color_intensity * sphere_color_intensity * float(sphere.kd) * max(0, np.dot(n, l))
-    
     
     return specular_intensity, ambient_intensity, diffuse_intensity
 
@@ -214,9 +199,8 @@ def intersect_sphere(origin_pos, pixel_pos, sphere: Sphere, is_shadow=False): #p
 
     quadratic = np.array([a,b,c])
     solution_arr = np.roots(quadratic)
-    
-    solution_arr = np.real(solution_arr[np.isreal(solution_arr)]) #make sure quadratic solution is real
-    solution_arr = solution_arr[solution_arr > 0.0001] #filter such that the solution is positive.
+    solution_arr = np.real(solution_arr[np.isreal(solution_arr)]) #make sure solution is real
+    solution_arr = solution_arr[solution_arr > 0.0001] #filter so that the solution is positive.
     
     if len(solution_arr) == 0 or (np.min(solution_arr) < 1 and np.max(solution_arr)<1 and not is_shadow): #if there is no intersection with the sphere then move on.
         return None
@@ -225,11 +209,11 @@ def intersect_sphere(origin_pos, pixel_pos, sphere: Sphere, is_shadow=False): #p
     
     P = origin_pos + t * ray_vec #solve for point of intersection by plugging t into original equation
     P[-1] = 1
-    if P[-2] > -1:
+    if P[-2] > -1: #checks if the point evaluated at the minimum t is closer than the near plane.
         t2 = np.max(solution_arr)
         p2 = origin_pos + t2 * ray_vec
-        if (p2[-2] <= -1):
-            p2[-1] = 2
+        if (p2[-2] <= -1): #checks if the sphere is split by the near plane. if it is then we want to use the second point.
+            p2[-1] = 2 #pass this information uitilzing the 4th coordinate, using 2 = w to represent this.
             return (t2,p2)
 
     return (t, P) #return the point of intersection and the solved t value.
@@ -268,29 +252,24 @@ def check_shadow_ray(light, point, sphere, sphere2):
     dist_to_light = np.linalg.norm(direction)
     direction = direction / dist_to_light
 
-    #avoid self intersection
     inv_mat = get_inv_mat_sphere(sphere)
     inv_transpose = np.transpose(inv_mat)
-
     P_obj = np.matmul(inv_mat, np.array([point[0], point[1], point[2], 1]))
-
     if point[-1] == 2:
         N_obj = np.array([-P_obj[0], -P_obj[1], -P_obj[2], 0])
     else:
         N_obj = np.array([P_obj[0], P_obj[1], P_obj[2], 0])
-
     N_world = np.matmul(inv_transpose, N_obj)[:3]
-
     n = N_world / np.linalg.norm(N_world)
 
-    origin = point[:3] + 0.00001 * direction
-   # origin = point[:3] + 0.0001 * direction
+    origin = point[:3] + 0.00001 * direction #make sure to avoid self intersection.
+
 
     #homogenous
     origin_4d = np.array([origin[0], origin[1], origin[2], 1])
     target_4d = np.array([origin[0] + direction[0], origin[1] + direction[1], origin[2] + direction[2], 1])
 
-    hit = intersect_sphere(origin_4d, target_4d, sphere2, True) 
+    hit = intersect_sphere(origin_4d, target_4d, sphere2, True) #check if sphere blocks light.
 
     if hit and hit[0] < dist_to_light:
         return True  #blocked
