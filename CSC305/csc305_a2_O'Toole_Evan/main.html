@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
+
+in vec4 vPosition;
+in vec3 vNormal;
+in vec4 vColor;
+in vec2 vTexCoord;
+
+
+out vec3 fPos;  
+out vec3 fLpos; 
+out vec3 fN;   
+out vec2 fTexCoordOut;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 normalMatrix;
+uniform mat4 projectionMatrix;
+uniform vec4 lightPosition;
+
+void main()
+{
+    fPos = (modelViewMatrix * vPosition).xyz; //transform vertex position to camera coordinates
+   
+    fN = normalize((normalMatrix * vec4(vNormal, 0.0)).xyz);  //transform normal to camera coordinates
+
+    fLpos = lightPosition.xyz; //set fLpos
+
+    //pass texture coordinate through
+    fTexCoordOut = vTexCoord;
+
+    //transform vertex position into clip coordinates
+    gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+}
+
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
+
+precision mediump float;
+
+in vec3 fPos;
+in vec3 fLpos;
+in vec3 fN;
+in vec2 fTexCoordOut;
+
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+uniform float shininess;
+uniform sampler2D texture1;
+uniform sampler2D texture2;
+uniform int useTextures;
+uniform float colorEffect;
+
+layout(location = 0) out vec4 fragColor;
+
+//for each fragment ADS using blinn phong.
+vec4 ads(vec3 pos, vec3 lpos, vec3 N)
+{
+    vec3 L = normalize(lpos - pos);  //direction to light
+    vec3 V = normalize(-pos);  //direction to camera (camera is at origin in this space)
+
+    vec3 H = normalize(L + V); //blinn phong: use H vector instead of reflection vector
+    float lightDotNormal = max(dot(L, N), 0.0);
+
+    vec4 diffuse  = diffuseProduct  * lightDotNormal;
+    vec4 specular = specularProduct * pow(max(dot(N, H), 0.0), shininess);
+
+    if (dot(L, N) < 0.0) specular = vec4(0.0, 0.0, 0.0, 1.0);
+
+    vec4 color = ambientProduct + diffuse + specular;
+    color.a = 1.0;
+    return color;
+}
+
+
+
+void main()
+{
+    vec3 N = normalize(fN); //normalize again
+
+    vec3 L = normalize(fLpos - fPos); //find the direction of the light source going to the other position
+
+    vec4 litColor = ads(fPos, fLpos, N); //call ads to compute with blinn phong
+    litColor.a = 1.0; //make opaque
+
+    if (useTextures == 1) {
+        fragColor = texture(texture1, fTexCoordOut); //if textures are enabled sample the texture
+    } 
+    else {
+        fragColor = litColor; //otherwise use the computed lit color
+    }
+
+    //RED AND GREEN SHADER EFFECT. colorEffect passed from main.js:
+    float intensity = abs(colorEffect); //find the absolute value of colorEffect from main.js to use for strength of red or green
+    if (colorEffect < 0.0) { //if the color effect value passed is less than zero then this means we want green
+        fragColor = fragColor + (intensity*0.6)*(vec4(0.0, 1.0, 0.0, 1.0) - fragColor); //adjust amount of green to mix with each fragment
+        //use *0.6 to make it so the color never fully takes over. uses linear interpolation to add in color slowly.
+    } else if (colorEffect > 0.0) { //if the color effect value passed is greater than zero then this means we want red
+        fragColor = fragColor + (intensity*0.6)*(vec4(1.0, 0.0, 0.0, 1.0) - fragColor); //adjust amount of red to blend into each fragment
+    }
+}
+
+</script>
+
+<script type="text/javascript" src="Common/webgl-utils.js"></script>
+<script type="text/javascript" src="Common/initShaders.js"></script>
+<script type="text/javascript" src="Common/MV.js"></script>
+<script type="text/javascript" src="objects.js"></script>
+<script type="text/javascript" src="main.js"></script>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+
+<br/>
+<br/>
+
+<div id="textureToggleButton">
+    <input id="textureToggleButtoni" type="button" value="Toggle Textures"/>
+</div>
+</body>
+</html>
